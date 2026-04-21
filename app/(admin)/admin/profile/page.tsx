@@ -13,7 +13,7 @@ export default async function AdminProfilePage() {
     supabase
       .from('profiles')
       .select(
-        'display_name, bio, avatar_path, og_image_path, updated_at, footer_text'
+        'display_name, bio, avatar_path, og_image_path, updated_at, footer_text, bio_en, bio_ja, bio_es'
       )
       .eq('id', user.id)
       .maybeSingle(),
@@ -78,6 +78,9 @@ export default async function AdminProfilePage() {
             display_name_color: theme?.display_name_color ?? '#2D2A3E',
             bio_color: theme?.bio_color ?? '#737373',
             footer_color: theme?.footer_color ?? '#737373',
+            bio_en: profile.bio_en ?? '',
+            bio_ja: profile.bio_ja ?? '',
+            bio_es: profile.bio_es ?? '',
           }}
           avatarUrl={avatarUrl}
           ogImageUrl={ogImageUrl}

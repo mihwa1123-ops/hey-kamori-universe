@@ -20,7 +20,9 @@ export default async function AdminHomePage() {
         .maybeSingle(),
       supabase
         .from('links')
-        .select('id, title, url, is_public, click_count, display_order')
+        .select(
+          'id, title, url, is_public, click_count, display_order, title_en, title_ja, title_es'
+        )
         .eq('profile_id', user.id)
         .order('display_order', { ascending: true })
         .order('created_at', { ascending: false }),

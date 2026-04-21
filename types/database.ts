@@ -86,6 +86,9 @@ export type Database = {
           is_public: boolean
           profile_id: string
           title: string
+          title_en: string | null
+          title_es: string | null
+          title_ja: string | null
           updated_at: string
           url: string
         }
@@ -97,6 +100,9 @@ export type Database = {
           is_public?: boolean
           profile_id: string
           title: string
+          title_en?: string | null
+          title_es?: string | null
+          title_ja?: string | null
           updated_at?: string
           url: string
         }
@@ -108,6 +114,9 @@ export type Database = {
           is_public?: boolean
           profile_id?: string
           title?: string
+          title_en?: string | null
+          title_es?: string | null
+          title_ja?: string | null
           updated_at?: string
           url?: string
         }
@@ -125,6 +134,9 @@ export type Database = {
         Row: {
           avatar_path: string | null
           bio: string
+          bio_en: string | null
+          bio_es: string | null
+          bio_ja: string | null
           created_at: string
           display_name: string
           footer_text: string | null
@@ -139,6 +151,9 @@ export type Database = {
         Insert: {
           avatar_path?: string | null
           bio?: string
+          bio_en?: string | null
+          bio_es?: string | null
+          bio_ja?: string | null
           created_at?: string
           display_name: string
           footer_text?: string | null
@@ -153,6 +168,9 @@ export type Database = {
         Update: {
           avatar_path?: string | null
           bio?: string
+          bio_en?: string | null
+          bio_es?: string | null
+          bio_ja?: string | null
           created_at?: string
           display_name?: string
           footer_text?: string | null

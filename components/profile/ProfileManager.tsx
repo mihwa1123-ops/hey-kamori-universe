@@ -17,6 +17,9 @@ type ProfileData = {
   display_name_color: string;
   bio_color: string;
   footer_color: string;
+  bio_en: string;
+  bio_ja: string;
+  bio_es: string;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -38,6 +41,9 @@ export function ProfileManager({
   const [displayNameColor, setDisplayNameColor] = useState(profile.display_name_color);
   const [bioColor, setBioColor] = useState(profile.bio_color);
   const [footerColor, setFooterColor] = useState(profile.footer_color);
+  const [bioEn, setBioEn] = useState(profile.bio_en);
+  const [bioJa, setBioJa] = useState(profile.bio_ja);
+  const [bioEs, setBioEs] = useState(profile.bio_es);
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -67,6 +73,9 @@ export function ProfileManager({
     displayNameColor !== profile.display_name_color ||
     bioColor !== profile.bio_color ||
     footerColor !== profile.footer_color ||
+    bioEn !== profile.bio_en ||
+    bioJa !== profile.bio_ja ||
+    bioEs !== profile.bio_es ||
     pendingFile !== null ||
     pendingOgFile !== null;
 
@@ -161,6 +170,9 @@ export function ProfileManager({
         display_name_color: displayNameColor,
         bio_color: bioColor,
         footer_color: footerColor,
+        bio_en: bioEn || null,
+        bio_ja: bioJa || null,
+        bio_es: bioEs || null,
       });
       if (result.error) {
         setStatus('error');
@@ -315,7 +327,7 @@ export function ProfileManager({
       </FieldWithColor>
 
       <FieldWithColor
-        label={`내용 (${bioLen}/100자)`}
+        label={`내용 / 한국어 (${bioLen}/100자)`}
         color={bioColor}
         onColorChange={setBioColor}
       >
@@ -331,6 +343,34 @@ export function ProfileManager({
                      disabled:opacity-50 resize-none"
         />
       </FieldWithColor>
+
+      <div className="rounded-lg bg-neutral-50 border border-neutral-200 p-3 space-y-3">
+        <p className="text-xs text-neutral-500">내용 번역 (선택 · 100자 이하)</p>
+        <TranslationField
+          label="English"
+          value={bioEn}
+          onChange={setBioEn}
+          disabled={isPending}
+          textarea
+          placeholder="Short intro for English visitors"
+        />
+        <TranslationField
+          label="日本語"
+          value={bioJa}
+          onChange={setBioJa}
+          disabled={isPending}
+          textarea
+          placeholder="日本語の自己紹介"
+        />
+        <TranslationField
+          label="Español"
+          value={bioEs}
+          onChange={setBioEs}
+          disabled={isPending}
+          textarea
+          placeholder="Breve introducción en español"
+        />
+      </div>
 
       <FieldWithColor
         label={`푸터 문구 (${footerLen}/60자)`}
@@ -402,6 +442,53 @@ function FieldWithColor({
       </div>
       {children}
     </div>
+  );
+}
+
+function TranslationField({
+  label,
+  value,
+  onChange,
+  disabled,
+  textarea,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  disabled: boolean;
+  textarea?: boolean;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block space-y-1">
+      <span className="text-xs text-neutral-500">{label}</span>
+      {textarea ? (
+        <textarea
+          maxLength={100}
+          rows={2}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          placeholder={placeholder}
+          className="w-full min-h-16 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500
+                     focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
+                     disabled:opacity-50 resize-none"
+        />
+      ) : (
+        <input
+          type="text"
+          maxLength={40}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          placeholder={placeholder}
+          className="w-full h-10 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder-neutral-500
+                     focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
+                     disabled:opacity-50"
+        />
+      )}
+    </label>
   );
 }
 

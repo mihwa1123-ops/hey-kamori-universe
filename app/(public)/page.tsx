@@ -89,12 +89,38 @@ export default async function PublicHomePage({
 
   const { data: links } = await supabase
     .from('links')
-    .select('id, title, url, display_order, created_at')
+    .select(
+      'id, title, url, display_order, created_at, title_en, title_ja, title_es'
+    )
     .eq('is_public', true)
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false });
 
-  const hasLinks = (links?.length ?? 0) > 0;
+  const pickLinkTitle = (l: {
+    title: string;
+    title_en: string | null;
+    title_ja: string | null;
+    title_es: string | null;
+  }) => {
+    if (lang === 'en') return l.title_en || l.title;
+    if (lang === 'ja') return l.title_ja || l.title;
+    if (lang === 'es') return l.title_es || l.title;
+    return l.title;
+  };
+
+  const translatedLinks = (links ?? []).map((l) => ({
+    id: l.id,
+    url: l.url,
+    title: pickLinkTitle(l),
+  }));
+
+  const bioForLang =
+    (lang === 'en' ? profile.bio_en : null) ??
+    (lang === 'ja' ? profile.bio_ja : null) ??
+    (lang === 'es' ? profile.bio_es : null) ??
+    profile.bio;
+
+  const hasLinks = translatedLinks.length > 0;
   const footerText = profile.footer_text ?? t(lang, 'defaultFooter');
 
   return (
@@ -108,7 +134,7 @@ export default async function PublicHomePage({
     >
       <div className="max-w-md mx-auto relative">
         <div className="absolute top-3 right-3 z-20">
-          <LanguageSwitcher current={lang} />
+          <LanguageSwitcher current={lang} theme={appliedTheme} />
         </div>
         <div className="relative w-full h-[30vh] min-h-[220px] max-h-[380px] overflow-hidden">
           {avatarUrl ? (
@@ -155,19 +181,19 @@ export default async function PublicHomePage({
             >
               {profile.display_name}
             </h1>
-            {profile.bio && (
+            {bioForLang && (
               <p
                 className="text-sm leading-relaxed whitespace-pre-line"
                 style={{ color: appliedTheme.bio_color }}
               >
-                {profile.bio}
+                {bioForLang}
               </p>
             )}
           </section>
 
           {hasLinks ? (
             <section className="flex flex-col gap-3">
-              {links!.map((link) => (
+              {translatedLinks.map((link) => (
                 <LinkPreview key={link.id} link={link} theme={appliedTheme} />
               ))}
             </section>

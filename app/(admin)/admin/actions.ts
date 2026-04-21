@@ -8,6 +8,9 @@ export type LinkInput = {
   title: string;
   url: string;
   is_public: boolean;
+  title_en?: string | null;
+  title_ja?: string | null;
+  title_es?: string | null;
 };
 
 export type ActionResult = { error: string | null };
@@ -30,7 +33,16 @@ function validateLinkInput(input: LinkInput): string | null {
   if (!/^https?:\/\/.+/i.test(input.url.trim())) {
     return 'URL은 http:// 또는 https://로 시작해야 합니다';
   }
+  for (const t of [input.title_en, input.title_ja, input.title_es]) {
+    if (t && t.length > 40) return '번역 제목은 최대 40자입니다';
+  }
   return null;
+}
+
+function normalizeTranslation(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const trimmed = v.trim();
+  return trimmed ? trimmed : null;
 }
 
 function revalidateAll() {
@@ -59,6 +71,9 @@ export async function createLink(input: LinkInput): Promise<ActionResult> {
     url: input.url.trim(),
     is_public: input.is_public,
     display_order: nextOrder,
+    title_en: normalizeTranslation(input.title_en),
+    title_ja: normalizeTranslation(input.title_ja),
+    title_es: normalizeTranslation(input.title_es),
   });
 
   if (error) return { error: error.message };
@@ -80,6 +95,9 @@ export async function updateLink(
       title: input.title.trim(),
       url: input.url.trim(),
       is_public: input.is_public,
+      title_en: normalizeTranslation(input.title_en),
+      title_ja: normalizeTranslation(input.title_ja),
+      title_es: normalizeTranslation(input.title_es),
     })
     .eq('id', id);
 
@@ -117,6 +135,9 @@ export type ProfileInput = {
   display_name_color: string;
   bio_color: string;
   footer_color: string;
+  bio_en?: string | null;
+  bio_ja?: string | null;
+  bio_es?: string | null;
 };
 
 export async function updateProfile(
@@ -132,6 +153,11 @@ export async function updateProfile(
   }
   if (bio.length > 100) {
     return { error: '내용은 최대 100자입니다' };
+  }
+  for (const b of [input.bio_en, input.bio_ja, input.bio_es]) {
+    if (b && b.length > 100) {
+      return { error: '번역 내용은 최대 100자입니다' };
+    }
   }
   if (footer_text.length > 60) {
     return { error: '푸터 문구는 최대 60자입니다' };
@@ -152,6 +178,9 @@ export async function updateProfile(
       display_name,
       bio,
       footer_text: footer_text || null,
+      bio_en: normalizeTranslation(input.bio_en),
+      bio_ja: normalizeTranslation(input.bio_ja),
+      bio_es: normalizeTranslation(input.bio_es),
     })
     .eq('id', user.id);
   if (profileErr) return { error: profileErr.message };
