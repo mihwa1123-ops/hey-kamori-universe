@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { LinkPreview } from '@/components/links/LinkPreview';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { THEME_DEFAULTS, getFontFamily } from '@/lib/theme';
 import { isAvatarVideo } from '@/lib/avatar';
+import { parseLang, t } from '@/lib/i18n';
 
 export const revalidate = 60;
 
@@ -44,7 +46,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function PublicHomePage() {
+export default async function PublicHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const sp = await searchParams;
+  const lang = parseLang(sp.lang);
+
   const supabase = await createClient();
 
   const { data: profile } = await supabase
@@ -56,7 +65,7 @@ export default async function PublicHomePage() {
   if (!profile) {
     return (
       <main className="min-h-screen bg-brand-cream flex items-center justify-center px-4">
-        <p className="text-sm text-neutral-500">아직 설정 중이에요 🌱</p>
+        <p className="text-sm text-neutral-500">{t(lang, 'notConfigured')}</p>
       </main>
     );
   }
@@ -86,7 +95,7 @@ export default async function PublicHomePage() {
     .order('created_at', { ascending: false });
 
   const hasLinks = (links?.length ?? 0) > 0;
-  const footerText = profile.footer_text ?? 'Made with 💜 by kamori';
+  const footerText = profile.footer_text ?? t(lang, 'defaultFooter');
 
   return (
     <main
@@ -97,7 +106,10 @@ export default async function PublicHomePage() {
         fontWeight: Number(appliedTheme.font_weight),
       }}
     >
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto relative">
+        <div className="absolute top-3 right-3 z-20">
+          <LanguageSwitcher current={lang} />
+        </div>
         <div className="relative w-full h-[30vh] min-h-[220px] max-h-[380px] overflow-hidden">
           {avatarUrl ? (
             isAvatarVideo(avatarUrl) ? (
@@ -161,7 +173,7 @@ export default async function PublicHomePage() {
             </section>
           ) : (
             <section className="py-10 text-center">
-              <p className="text-sm text-neutral-500">준비 중이에요 🌱</p>
+              <p className="text-sm text-neutral-500">{t(lang, 'emptyLinks')}</p>
             </section>
           )}
 
