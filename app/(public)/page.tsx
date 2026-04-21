@@ -136,12 +136,15 @@ export default async function PublicHomePage({
         <div className="absolute top-3 right-3 z-20">
           <LanguageSwitcher current={lang} theme={appliedTheme} />
         </div>
-        <div className="relative w-full h-[30vh] min-h-[220px] max-h-[380px] overflow-hidden">
+        <div
+          className="relative w-full h-[30vh] min-h-[220px] max-h-[380px] overflow-hidden"
+          style={{ backgroundColor: appliedTheme.bg_color_1 }}
+        >
           {avatarUrl ? (
             isAvatarVideo(avatarUrl) ? (
               <video
                 src={avatarUrl}
-                className="w-full h-full object-cover"
+                className="block w-full h-full object-cover"
                 autoPlay
                 loop
                 muted
@@ -152,7 +155,7 @@ export default async function PublicHomePage({
               <img
                 src={avatarUrl}
                 alt={profile.display_name}
-                className="w-full h-full object-cover"
+                className="block w-full h-full object-cover"
               />
             )
           ) : (
@@ -166,14 +169,18 @@ export default async function PublicHomePage({
             </div>
           )}
           <div
-            className="pointer-events-none absolute bottom-0 left-0 right-0 h-1/2"
+            className="pointer-events-none absolute left-0 right-0 bottom-[-1px] h-3/5"
             style={{
-              background: `linear-gradient(to bottom, transparent 0%, ${appliedTheme.bg_color_1} 100%)`,
+              backgroundImage: `linear-gradient(to bottom, transparent 0%, ${appliedTheme.bg_color_1} 70%, ${appliedTheme.bg_color_1} 100%)`,
+              backgroundColor: appliedTheme.bg_color_1,
             }}
           />
         </div>
 
-        <div className="px-4 pb-10 -mt-4 relative space-y-6">
+        <div
+          className="px-4 pb-10 -mt-8 relative space-y-6"
+          style={{ backgroundColor: appliedTheme.bg_color_1 }}
+        >
           <section className="text-center space-y-2">
             <h1
               className="text-2xl font-semibold"
