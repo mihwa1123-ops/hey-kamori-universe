@@ -80,48 +80,55 @@ export default async function PublicHomePage() {
         fontWeight: Number(appliedTheme.font_weight),
       }}
     >
-      <div className="max-w-md mx-auto px-4 py-10 space-y-6">
-        <section className="flex flex-col items-center text-center space-y-3">
-          <div
-            className="w-full aspect-square max-h-[400px] rounded-3xl overflow-hidden
-                       bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft
-                       border border-brand-lavender-soft shadow-card"
-          >
-            {avatarUrl ? (
-              isAvatarVideo(avatarUrl) ? (
-                <video
-                  src={avatarUrl}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={avatarUrl}
-                  alt={profile.display_name}
-                  className="w-full h-full object-cover"
-                />
-              )
+      <div className="max-w-md mx-auto">
+        <div className="relative w-full h-[30vh] min-h-[220px] max-h-[380px] overflow-hidden">
+          {avatarUrl ? (
+            isAvatarVideo(avatarUrl) ? (
+              <video
+                src={avatarUrl}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
             ) : (
-              <div className="flex items-center justify-center w-full h-full">
-                <span className="text-6xl font-semibold text-neutral-900">
-                  {profile.display_name.charAt(0)}
-                </span>
-              </div>
-            )}
-          </div>
-          <h1 className="text-2xl font-semibold text-neutral-900">
-            {profile.display_name}
-          </h1>
-          {profile.bio && (
-            <p className="text-sm text-neutral-500 leading-relaxed whitespace-pre-line">
-              {profile.bio}
-            </p>
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarUrl}
+                alt={profile.display_name}
+                className="w-full h-full object-cover"
+              />
+            )
+          ) : (
+            <div
+              className="flex items-center justify-center w-full h-full
+                         bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft"
+            >
+              <span className="text-6xl font-semibold text-neutral-900">
+                {profile.display_name.charAt(0)}
+              </span>
+            </div>
           )}
-        </section>
+          <div
+            className="pointer-events-none absolute bottom-0 left-0 right-0 h-1/2"
+            style={{
+              background: `linear-gradient(to bottom, transparent 0%, ${appliedTheme.bg_color_1} 100%)`,
+            }}
+          />
+        </div>
+
+        <div className="px-4 pb-10 -mt-4 relative space-y-6">
+          <section className="text-center space-y-2">
+            <h1 className="text-2xl font-semibold text-neutral-900">
+              {profile.display_name}
+            </h1>
+            {profile.bio && (
+              <p className="text-sm text-neutral-500 leading-relaxed whitespace-pre-line">
+                {profile.bio}
+              </p>
+            )}
+          </section>
 
         {hasSocial && (
           <section className="flex justify-center gap-3 text-sm">
@@ -170,9 +177,10 @@ export default async function PublicHomePage() {
           </section>
         )}
 
-        <footer className="pt-6 text-center">
-          <p className="text-xs text-neutral-500">Made with 💜 by kamori</p>
-        </footer>
+          <footer className="pt-6 text-center">
+            <p className="text-xs text-neutral-500">Made with 💜 by kamori</p>
+          </footer>
+        </div>
       </div>
     </main>
   );
