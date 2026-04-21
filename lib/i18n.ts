@@ -11,7 +11,8 @@ type TranslationKey =
   | 'emptyLinks'
   | 'notConfigured'
   | 'defaultFooter'
-  | 'contactCta';
+  | 'contactCta'
+  | 'copied';
 
 const TRANSLATIONS: Record<Lang, Record<TranslationKey, string>> = {
   ko: {
@@ -19,24 +20,28 @@ const TRANSLATIONS: Record<Lang, Record<TranslationKey, string>> = {
     notConfigured: '아직 설정 중이에요 🌱',
     defaultFooter: 'Made with 💜 by kamori',
     contactCta: '✉️ 협업 & 광고 문의',
+    copied: '복사됨',
   },
   en: {
     emptyLinks: 'Coming soon 🌱',
     notConfigured: 'Getting ready 🌱',
     defaultFooter: 'Made with 💜 by kamori',
     contactCta: '✉️ Collab & ad inquiries',
+    copied: 'Copied',
   },
   ja: {
     emptyLinks: '準備中です 🌱',
     notConfigured: '準備中です 🌱',
     defaultFooter: 'Made with 💜 by kamori',
     contactCta: '✉️ コラボ・広告のお問い合わせ',
+    copied: 'コピー済み',
   },
   es: {
     emptyLinks: 'Próximamente 🌱',
     notConfigured: 'Preparándose 🌱',
     defaultFooter: 'Made with 💜 by kamori',
     contactCta: '✉️ Colaboraciones y anuncios',
+    copied: 'Copiado',
   },
 };
 
