@@ -51,18 +51,23 @@ export function ContactBox({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      aria-label={`${email} ${t(lang, 'copied')}`}
-      style={buttonStyle}
-      className="flex flex-col items-center justify-center gap-0.5 min-h-16 px-4 py-2
-                 transition-all duration-200 hover:-translate-y-0.5
-                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2"
-    >
-      <span className="text-xs opacity-75">{t(lang, 'contactCta')}</span>
-      <span className="flex items-center gap-1.5 text-sm font-medium">
-        <span>{email}</span>
+    <div className="flex flex-col items-center gap-2">
+      <p
+        className="text-sm text-center"
+        style={{ color: theme.bio_color }}
+      >
+        {t(lang, 'contactCta')}
+      </p>
+      <button
+        type="button"
+        onClick={handleCopy}
+        aria-label={`${email} ${t(lang, 'copied')}`}
+        style={buttonStyle}
+        className="flex items-center justify-center gap-2 h-14 px-4 w-full
+                   transition-all duration-200 hover:-translate-y-0.5
+                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2"
+      >
+        <span className="text-sm font-medium">{email}</span>
         {copied ? (
           <span className="flex items-center gap-1 text-success">
             <Check className="w-4 h-4" />
@@ -71,7 +76,7 @@ export function ContactBox({
         ) : (
           <Copy className="w-4 h-4 opacity-75" />
         )}
-      </span>
-    </button>
+      </button>
+    </div>
   );
 }
