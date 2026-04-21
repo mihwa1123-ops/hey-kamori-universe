@@ -106,6 +106,7 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
         font_weight: state.font_weight as '300' | '500' | '700',
         display_name_color: state.display_name_color,
         bio_color: state.bio_color,
+        footer_color: state.footer_color,
       });
       if (result.error) {
         setError(result.error);
@@ -190,6 +191,11 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
               label="내용 글자"
               value={state.bio_color}
               onChange={(v) => setState({ ...state, bio_color: v })}
+            />
+            <ColorField
+              label="푸터 글자"
+              value={state.footer_color}
+              onChange={(v) => setState({ ...state, footer_color: v })}
             />
             <ColorField
               label="버튼 배경"

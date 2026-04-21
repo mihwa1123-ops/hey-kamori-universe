@@ -114,6 +114,9 @@ export type ProfileInput = {
   display_name: string;
   bio: string;
   footer_text: string;
+  display_name_color: string;
+  bio_color: string;
+  footer_color: string;
 };
 
 export async function updateProfile(
@@ -133,8 +136,17 @@ export async function updateProfile(
   if (footer_text.length > 60) {
     return { error: '푸터 문구는 최대 60자입니다' };
   }
+  for (const color of [
+    input.display_name_color,
+    input.bio_color,
+    input.footer_color,
+  ]) {
+    if (!HEX_RE.test(color)) {
+      return { error: '색상 형식이 올바르지 않습니다 (#RRGGBB)' };
+    }
+  }
 
-  const { error } = await supabase
+  const { error: profileErr } = await supabase
     .from('profiles')
     .update({
       display_name,
@@ -142,8 +154,21 @@ export async function updateProfile(
       footer_text: footer_text || null,
     })
     .eq('id', user.id);
+  if (profileErr) return { error: profileErr.message };
 
-  if (error) return { error: error.message };
+  const { error: themeErr } = await supabase
+    .from('themes')
+    .upsert(
+      {
+        profile_id: user.id,
+        display_name_color: input.display_name_color.toUpperCase(),
+        bio_color: input.bio_color.toUpperCase(),
+        footer_color: input.footer_color.toUpperCase(),
+      },
+      { onConflict: 'profile_id' }
+    );
+  if (themeErr) return { error: themeErr.message };
+
   revalidatePath('/');
   revalidatePath('/admin');
   revalidatePath('/admin/profile');
@@ -162,6 +187,7 @@ export type ThemeInput = {
   font_weight: '300' | '500' | '700';
   display_name_color: string;
   bio_color: string;
+  footer_color: string;
 };
 
 const HEX_RE = /^#[0-9A-F]{6}$/i;
@@ -181,6 +207,7 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
     input.button_border,
     input.display_name_color,
     input.bio_color,
+    input.footer_color,
   ]) {
     if (!HEX_RE.test(color)) {
       return { error: '색상 형식이 올바르지 않습니다 (#RRGGBB)' };
@@ -216,6 +243,7 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
       font_weight: input.font_weight,
       display_name_color: input.display_name_color.toUpperCase(),
       bio_color: input.bio_color.toUpperCase(),
+      footer_color: input.footer_color.toUpperCase(),
     },
     { onConflict: 'profile_id' }
   );

@@ -12,6 +12,7 @@ export type AppliedTheme = {
   font_weight: string;
   display_name_color: string;
   bio_color: string;
+  footer_color: string;
 };
 
 export const THEME_DEFAULTS: AppliedTheme = {
@@ -26,6 +27,7 @@ export const THEME_DEFAULTS: AppliedTheme = {
   font_weight: '500',
   display_name_color: '#2D2A3E',
   bio_color: '#737373',
+  footer_color: '#737373',
 };
 
 const RADIUS_MAP: Record<string, string> = {

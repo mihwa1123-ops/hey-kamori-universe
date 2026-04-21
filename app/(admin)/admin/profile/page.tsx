@@ -9,11 +9,18 @@ export default async function AdminProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('display_name, bio, avatar_path, updated_at, footer_text')
-    .eq('id', user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data: theme }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('display_name, bio, avatar_path, updated_at, footer_text')
+      .eq('id', user.id)
+      .maybeSingle(),
+    supabase
+      .from('themes')
+      .select('display_name_color, bio_color, footer_color')
+      .eq('profile_id', user.id)
+      .maybeSingle(),
+  ]);
 
   if (!profile) {
     return (
@@ -58,6 +65,9 @@ export default async function AdminProfilePage() {
             display_name: profile.display_name,
             bio: profile.bio ?? '',
             footer_text: profile.footer_text ?? 'Made with 💜 by kamori',
+            display_name_color: theme?.display_name_color ?? '#2D2A3E',
+            bio_color: theme?.bio_color ?? '#737373',
+            footer_color: theme?.footer_color ?? '#737373',
           }}
           avatarUrl={avatarUrl}
         />

@@ -52,7 +52,7 @@ export default async function PublicHomePage() {
   const { data: theme } = await supabase
     .from('themes')
     .select(
-      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family, font_weight, display_name_color, bio_color'
+      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family, font_weight, display_name_color, bio_color, footer_color'
     )
     .eq('profile_id', profile.id)
     .maybeSingle();
@@ -150,7 +150,7 @@ export default async function PublicHomePage() {
             <footer className="pt-6 text-center">
               <p
                 className="text-xs"
-                style={{ color: appliedTheme.bio_color }}
+                style={{ color: appliedTheme.footer_color }}
               >
                 {footerText}
               </p>

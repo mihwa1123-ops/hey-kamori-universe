@@ -179,6 +179,7 @@ export type Database = {
           display_name_color: string
           font_family: string
           font_weight: string
+          footer_color: string
           profile_id: string
           updated_at: string
         }
@@ -197,6 +198,7 @@ export type Database = {
           display_name_color?: string
           font_family?: string
           font_weight?: string
+          footer_color?: string
           profile_id: string
           updated_at?: string
         }
@@ -215,6 +217,7 @@ export type Database = {
           display_name_color?: string
           font_family?: string
           font_weight?: string
+          footer_color?: string
           profile_id?: string
           updated_at?: string
         }

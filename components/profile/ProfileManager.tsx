@@ -14,6 +14,9 @@ type ProfileData = {
   display_name: string;
   bio: string;
   footer_text: string;
+  display_name_color: string;
+  bio_color: string;
+  footer_color: string;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -30,6 +33,9 @@ export function ProfileManager({
   const [displayName, setDisplayName] = useState(profile.display_name);
   const [bio, setBio] = useState(profile.bio);
   const [footerText, setFooterText] = useState(profile.footer_text);
+  const [displayNameColor, setDisplayNameColor] = useState(profile.display_name_color);
+  const [bioColor, setBioColor] = useState(profile.bio_color);
+  const [footerColor, setFooterColor] = useState(profile.footer_color);
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -47,6 +53,9 @@ export function ProfileManager({
     displayName !== profile.display_name ||
     bio !== profile.bio ||
     footerText !== profile.footer_text ||
+    displayNameColor !== profile.display_name_color ||
+    bioColor !== profile.bio_color ||
+    footerColor !== profile.footer_color ||
     pendingFile !== null;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +107,9 @@ export function ProfileManager({
         display_name: displayName,
         bio,
         footer_text: footerText,
+        display_name_color: displayNameColor,
+        bio_color: bioColor,
+        footer_color: footerColor,
       });
       if (result.error) {
         setStatus('error');
@@ -125,9 +137,9 @@ export function ProfileManager({
         <SaveIndicator status={status} />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-4">
         <div
-          className="relative w-24 h-24 rounded-2xl overflow-hidden flex items-center justify-center shrink-0
+          className="relative w-40 aspect-[16/9] rounded-xl overflow-hidden flex items-center justify-center shrink-0
                      bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft
                      border border-brand-lavender-soft"
         >
@@ -183,7 +195,11 @@ export function ProfileManager({
         />
       </div>
 
-      <Field label="닉네임 (1-30자)">
+      <FieldWithColor
+        label="닉네임 (1-30자)"
+        color={displayNameColor}
+        onColorChange={setDisplayNameColor}
+      >
         <input
           type="text"
           maxLength={30}
@@ -194,9 +210,13 @@ export function ProfileManager({
                      focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
                      disabled:opacity-50"
         />
-      </Field>
+      </FieldWithColor>
 
-      <Field label={`내용 (${bioLen}/100자)`}>
+      <FieldWithColor
+        label={`내용 (${bioLen}/100자)`}
+        color={bioColor}
+        onColorChange={setBioColor}
+      >
         <textarea
           maxLength={100}
           rows={3}
@@ -208,9 +228,13 @@ export function ProfileManager({
                      focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
                      disabled:opacity-50 resize-none"
         />
-      </Field>
+      </FieldWithColor>
 
-      <Field label={`푸터 문구 (${footerLen}/60자)`}>
+      <FieldWithColor
+        label={`푸터 문구 (${footerLen}/60자)`}
+        color={footerColor}
+        onColorChange={setFooterColor}
+      >
         <input
           type="text"
           maxLength={60}
@@ -222,7 +246,7 @@ export function ProfileManager({
                      focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
                      disabled:opacity-50"
         />
-      </Field>
+      </FieldWithColor>
 
       {errorMsg && <p className="text-sm text-danger">{errorMsg}</p>}
 
@@ -243,28 +267,39 @@ export function ProfileManager({
   );
 }
 
-function Field({
+function FieldWithColor({
   label,
-  small,
+  color,
+  onColorChange,
   children,
 }: {
   label: string;
-  small?: boolean;
+  color: string;
+  onColorChange: (v: string) => void;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block space-y-1">
-      <span
-        className={
-          small
-            ? 'block text-xs text-neutral-500'
-            : 'block text-sm font-medium text-neutral-700'
-        }
-      >
-        {label}
-      </span>
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="block text-sm font-medium text-neutral-700">
+          {label}
+        </span>
+        <label className="flex items-center gap-1 text-xs text-neutral-500">
+          <span>글자색</span>
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => onColorChange(e.target.value.toUpperCase())}
+            className="w-8 h-7 rounded-md border border-neutral-200 bg-white cursor-pointer p-0.5"
+            aria-label={`${label} 글자색`}
+          />
+          <span className="font-mono text-[10px] text-neutral-500 w-14">
+            {color}
+          </span>
+        </label>
+      </div>
       {children}
-    </label>
+    </div>
   );
 }
 

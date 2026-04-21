@@ -134,7 +134,7 @@ export function PhonePreview({
               <footer className="pt-2 text-center">
                 <p
                   className="text-[9px]"
-                  style={{ color: appliedTheme.bio_color }}
+                  style={{ color: appliedTheme.footer_color }}
                 >
                   {footer}
                 </p>
