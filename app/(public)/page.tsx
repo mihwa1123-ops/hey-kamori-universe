@@ -51,7 +51,7 @@ export default async function PublicHomePage() {
   const { data: theme } = await supabase
     .from('themes')
     .select(
-      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family'
+      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family, font_weight'
     )
     .eq('profile_id', profile.id)
     .maybeSingle();
@@ -76,6 +76,7 @@ export default async function PublicHomePage() {
       style={{
         backgroundColor: appliedTheme.bg_color_1,
         fontFamily: getFontFamily(appliedTheme.font_family),
+        fontWeight: Number(appliedTheme.font_weight),
       }}
     >
       <div className="max-w-md mx-auto px-4 py-10 space-y-6">

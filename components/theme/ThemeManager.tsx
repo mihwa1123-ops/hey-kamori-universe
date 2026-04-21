@@ -63,6 +63,12 @@ const FONT_OPTIONS = [
   { value: 'plex-kr', label: 'IBM Plex Sans KR (한글·영문)' },
 ] as const;
 
+const WEIGHT_OPTIONS = [
+  { value: '300', label: 'Light (300)' },
+  { value: '500', label: 'Medium (500)' },
+  { value: '700', label: 'Bold (700)' },
+] as const;
+
 export function ThemeManager({ theme }: { theme: AppliedTheme }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -97,6 +103,7 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
           | 'noto-kr'
           | 'noto-jp'
           | 'plex-kr',
+        font_weight: state.font_weight as '300' | '500' | '700',
       });
       if (result.error) {
         setError(result.error);
@@ -111,10 +118,12 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
   const previewBg: CSSProperties = {
     backgroundColor: state.bg_color_1,
     fontFamily: getFontFamily(state.font_family),
+    fontWeight: Number(state.font_weight),
   };
   const previewBtn: CSSProperties = {
     ...buildButtonStyle(state),
     fontFamily: getFontFamily(state.font_family),
+    fontWeight: Number(state.font_weight),
   };
 
   return (
@@ -205,18 +214,37 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
 
           <section className="space-y-3">
             <p className="text-sm font-medium text-neutral-700">페이지 폰트</p>
-            <select
-              value={state.font_family}
-              onChange={(e) => setState({ ...state, font_family: e.target.value })}
-              className="w-full h-11 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900
-                         focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent"
-            >
-              {FONT_OPTIONS.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.label}
-                </option>
-              ))}
-            </select>
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_180px] gap-2">
+              <select
+                value={state.font_family}
+                onChange={(e) =>
+                  setState({ ...state, font_family: e.target.value })
+                }
+                className="h-11 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900
+                           focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent"
+              >
+                {FONT_OPTIONS.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={state.font_weight}
+                onChange={(e) =>
+                  setState({ ...state, font_weight: e.target.value })
+                }
+                className="h-11 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900
+                           focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent"
+                aria-label="폰트 굵기"
+              >
+                {WEIGHT_OPTIONS.map((w) => (
+                  <option key={w.value} value={w.value}>
+                    {w.label}
+                  </option>
+                ))}
+              </select>
+            </div>
             <p className="text-xs text-neutral-500">
               모두 상업적 사용 가능 (OFL/Apache 라이선스) · 300/500/700 굵기 포함
             </p>

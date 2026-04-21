@@ -9,6 +9,7 @@ export type AppliedTheme = {
   button_radius: string;
   button_shadow: string;
   font_family: string;
+  font_weight: string;
 };
 
 export const THEME_DEFAULTS: AppliedTheme = {
@@ -20,6 +21,7 @@ export const THEME_DEFAULTS: AppliedTheme = {
   button_radius: 'rounder',
   button_shadow: 'soft',
   font_family: 'pretendard',
+  font_weight: '500',
 };
 
 const RADIUS_MAP: Record<string, string> = {

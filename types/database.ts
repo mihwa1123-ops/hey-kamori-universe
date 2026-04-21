@@ -173,6 +173,7 @@ export type Database = {
           button_style: string
           button_text: string
           font_family: string
+          font_weight: string
           profile_id: string
           updated_at: string
         }
@@ -188,6 +189,7 @@ export type Database = {
           button_style?: string
           button_text?: string
           font_family?: string
+          font_weight?: string
           profile_id: string
           updated_at?: string
         }
@@ -203,6 +205,7 @@ export type Database = {
           button_style?: string
           button_text?: string
           font_family?: string
+          font_weight?: string
           profile_id?: string
           updated_at?: string
         }

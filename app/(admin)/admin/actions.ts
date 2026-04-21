@@ -175,6 +175,7 @@ export type ThemeInput = {
   button_radius: 'square' | 'round' | 'rounder' | 'full';
   button_shadow: 'none' | 'soft' | 'strong' | 'hard';
   font_family: 'pretendard' | 'noto-kr' | 'noto-jp' | 'plex-kr';
+  font_weight: '300' | '500' | '700';
 };
 
 const HEX_RE = /^#[0-9A-F]{6}$/i;
@@ -182,6 +183,7 @@ const STYLES = ['solid', 'glass', 'outline'] as const;
 const RADII = ['square', 'round', 'rounder', 'full'] as const;
 const SHADOWS = ['none', 'soft', 'strong', 'hard'] as const;
 const FONTS = ['pretendard', 'noto-kr', 'noto-jp', 'plex-kr'] as const;
+const WEIGHTS = ['300', '500', '700'] as const;
 
 export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
@@ -208,6 +210,9 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
   if (!FONTS.includes(input.font_family)) {
     return { error: '잘못된 폰트 값' };
   }
+  if (!WEIGHTS.includes(input.font_weight)) {
+    return { error: '잘못된 폰트 굵기 값' };
+  }
 
   const { error } = await supabase.from('themes').upsert(
     {
@@ -220,6 +225,7 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
       button_radius: input.button_radius,
       button_shadow: input.button_shadow,
       font_family: input.font_family,
+      font_weight: input.font_weight,
     },
     { onConflict: 'profile_id' }
   );
