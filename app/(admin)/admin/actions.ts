@@ -3,14 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { translateToAll } from '@/lib/translate';
 
 export type LinkInput = {
   title: string;
   url: string;
   is_public: boolean;
-  title_en?: string | null;
-  title_ja?: string | null;
-  title_es?: string | null;
 };
 
 export type ActionResult = { error: string | null };
@@ -32,9 +30,6 @@ function validateLinkInput(input: LinkInput): string | null {
   }
   if (!/^https?:\/\/.+/i.test(input.url.trim())) {
     return 'URL은 http:// 또는 https://로 시작해야 합니다';
-  }
-  for (const t of [input.title_en, input.title_ja, input.title_es]) {
-    if (t && t.length > 40) return '번역 제목은 최대 40자입니다';
   }
   return null;
 }
@@ -65,15 +60,18 @@ export async function createLink(input: LinkInput): Promise<ActionResult> {
 
   const nextOrder = (maxRow?.display_order ?? -1) + 1;
 
+  const title = input.title.trim();
+  const tr = await translateToAll(title);
+
   const { error } = await supabase.from('links').insert({
     profile_id: user.id,
-    title: input.title.trim(),
+    title,
     url: input.url.trim(),
     is_public: input.is_public,
     display_order: nextOrder,
-    title_en: normalizeTranslation(input.title_en),
-    title_ja: normalizeTranslation(input.title_ja),
-    title_es: normalizeTranslation(input.title_es),
+    title_en: tr.en,
+    title_ja: tr.ja,
+    title_es: tr.es,
   });
 
   if (error) return { error: error.message };
@@ -89,15 +87,18 @@ export async function updateLink(
   const err = validateLinkInput(input);
   if (err) return { error: err };
 
+  const title = input.title.trim();
+  const tr = await translateToAll(title);
+
   const { error } = await supabase
     .from('links')
     .update({
-      title: input.title.trim(),
+      title,
       url: input.url.trim(),
       is_public: input.is_public,
-      title_en: normalizeTranslation(input.title_en),
-      title_ja: normalizeTranslation(input.title_ja),
-      title_es: normalizeTranslation(input.title_es),
+      title_en: tr.en,
+      title_ja: tr.ja,
+      title_es: tr.es,
     })
     .eq('id', id);
 

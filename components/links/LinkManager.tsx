@@ -119,13 +119,10 @@ export function LinkManager({
     const title = String(formData.get('title') ?? '').trim();
     const url = String(formData.get('url') ?? '').trim();
     const is_public = formData.get('is_public') === 'on';
-    const title_en = String(formData.get('title_en') ?? '').trim() || null;
-    const title_ja = String(formData.get('title_ja') ?? '').trim() || null;
-    const title_es = String(formData.get('title_es') ?? '').trim() || null;
 
     setFormError(null);
     startTransition(async () => {
-      const input = { title, url, is_public, title_en, title_ja, title_es };
+      const input = { title, url, is_public };
       const result =
         modal.kind === 'create'
           ? await createLink(input)
@@ -299,29 +296,9 @@ export function LinkManager({
               공개하기
             </label>
 
-            <div className="rounded-lg bg-neutral-50 border border-neutral-200 p-3 space-y-2">
-              <p className="text-xs text-neutral-500">제목 번역 (선택)</p>
-              {[
-                { name: 'title_en', label: 'English', placeholder: 'e.g. Blog', val: editing?.title_en ?? '' },
-                { name: 'title_ja', label: '日本語', placeholder: '例: ブログ', val: editing?.title_ja ?? '' },
-                { name: 'title_es', label: 'Español', placeholder: 'ej. Blog', val: editing?.title_es ?? '' },
-              ].map((f) => (
-                <label key={f.name} className="block space-y-1">
-                  <span className="text-xs text-neutral-500">{f.label}</span>
-                  <input
-                    type="text"
-                    name={f.name}
-                    maxLength={40}
-                    defaultValue={f.val}
-                    disabled={isPending}
-                    placeholder={f.placeholder}
-                    className="w-full h-10 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder-neutral-500
-                               focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
-                               disabled:opacity-50"
-                  />
-                </label>
-              ))}
-            </div>
+            <p className="text-xs text-neutral-500">
+              💡 저장 시 English / 日本語 / Español 로 자동 번역됩니다.
+            </p>
 
             {formError && <p className="text-sm text-danger">{formError}</p>}
 
