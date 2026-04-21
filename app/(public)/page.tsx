@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { LinkPreview } from '@/components/links/LinkPreview';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { THEME_DEFAULTS, getFontFamily } from '@/lib/theme';
+import { THEME_DEFAULTS, buildButtonStyle, getFontFamily } from '@/lib/theme';
 import { isAvatarVideo } from '@/lib/avatar';
 import { parseLang, t } from '@/lib/i18n';
 
@@ -202,6 +202,19 @@ export default async function PublicHomePage({
               <p className="text-sm text-neutral-500">{t(lang, 'emptyLinks')}</p>
             </section>
           )}
+
+          <section className="flex flex-col gap-3">
+            <a
+              href="mailto:hey.kamori@gmail.com"
+              style={buildButtonStyle(appliedTheme)}
+              className="flex items-center justify-center h-14 px-4 font-medium text-base
+                         transition-all duration-200
+                         hover:-translate-y-0.5
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2"
+            >
+              {t(lang, 'contactCta')}
+            </a>
+          </section>
 
           {footerText && (
             <footer className="pt-6 text-center">

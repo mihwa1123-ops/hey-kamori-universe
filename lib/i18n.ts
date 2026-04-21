@@ -7,28 +7,36 @@ export const LANGS: { code: Lang; label: string; short: string }[] = [
   { code: 'es', label: 'Español', short: 'ES' },
 ];
 
-type TranslationKey = 'emptyLinks' | 'notConfigured' | 'defaultFooter';
+type TranslationKey =
+  | 'emptyLinks'
+  | 'notConfigured'
+  | 'defaultFooter'
+  | 'contactCta';
 
 const TRANSLATIONS: Record<Lang, Record<TranslationKey, string>> = {
   ko: {
     emptyLinks: '준비 중이에요 🌱',
     notConfigured: '아직 설정 중이에요 🌱',
     defaultFooter: 'Made with 💜 by kamori',
+    contactCta: '✉️ 협업 & 광고 문의',
   },
   en: {
     emptyLinks: 'Coming soon 🌱',
     notConfigured: 'Getting ready 🌱',
     defaultFooter: 'Made with 💜 by kamori',
+    contactCta: '✉️ Collab & ad inquiries',
   },
   ja: {
     emptyLinks: '準備中です 🌱',
     notConfigured: '準備中です 🌱',
     defaultFooter: 'Made with 💜 by kamori',
+    contactCta: '✉️ コラボ・広告のお問い合わせ',
   },
   es: {
     emptyLinks: 'Próximamente 🌱',
     notConfigured: 'Preparándose 🌱',
     defaultFooter: 'Made with 💜 by kamori',
+    contactCta: '✉️ Colaboraciones y anuncios',
   },
 };
 
