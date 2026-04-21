@@ -31,7 +31,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(
           className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender"
         >
-          {visible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          {visible ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
         </button>
       </div>
     );

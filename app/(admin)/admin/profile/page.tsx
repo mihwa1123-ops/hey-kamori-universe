@@ -12,7 +12,7 @@ export default async function AdminProfilePage() {
   const { data: profile } = await supabase
     .from('profiles')
     .select(
-      'display_name, bio, avatar_path, social_instagram, social_twitter, social_youtube'
+      'display_name, bio, avatar_path, updated_at, social_instagram, social_twitter, social_youtube'
     )
     .eq('id', user.id)
     .maybeSingle();
@@ -26,8 +26,10 @@ export default async function AdminProfilePage() {
   }
 
   const avatarUrl = profile.avatar_path
-    ? supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data
-        .publicUrl
+    ? `${
+        supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data
+          .publicUrl
+      }?v=${encodeURIComponent(profile.updated_at)}`
     : null;
 
   return (

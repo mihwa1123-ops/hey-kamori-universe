@@ -94,6 +94,9 @@ export function ProfileManager({
         throw new Error(body.error ?? '업로드 실패');
       }
       router.refresh();
+      setStatus('saved');
+      if (savedTimer.current) clearTimeout(savedTimer.current);
+      savedTimer.current = setTimeout(() => setStatus('idle'), 1500);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : '업로드 실패');
       setLocalAvatar(avatarUrl);

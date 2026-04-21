@@ -41,8 +41,10 @@ export default async function PublicHomePage() {
   }
 
   const avatarUrl = profile.avatar_path
-    ? supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data
-        .publicUrl
+    ? `${
+        supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data
+          .publicUrl
+      }?v=${encodeURIComponent(profile.updated_at)}`
     : null;
 
   const { data: theme } = await supabase
