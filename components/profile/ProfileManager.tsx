@@ -3,6 +3,12 @@
 import { useEffect, useRef, useState, useTransition, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateProfile } from '@/app/(admin)/admin/actions';
+import {
+  AVATAR_ACCEPT,
+  AVATAR_MAX_SIZE,
+  AVATAR_MIME_ALLOWED,
+  isAvatarVideo,
+} from '@/lib/avatar';
 
 type ProfileData = {
   display_name: string;
@@ -53,13 +59,13 @@ export function ProfileManager({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setErrorMsg('지원하지 않는 형식 (jpg/png/webp만 가능)');
+    if (!AVATAR_MIME_ALLOWED.includes(file.type as (typeof AVATAR_MIME_ALLOWED)[number])) {
+      setErrorMsg('지원하지 않는 형식 (jpg/png/webp/gif/mp4/webm만 가능)');
       if (e.target) e.target.value = '';
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      setErrorMsg('파일 크기는 최대 2MB 입니다');
+    if (file.size > AVATAR_MAX_SIZE) {
+      setErrorMsg('파일 크기는 최대 10MB 입니다');
       if (e.target) e.target.value = '';
       return;
     }
@@ -115,6 +121,9 @@ export function ProfileManager({
   };
 
   const bioLen = bio.length;
+  const isVideoPreview = pendingFile
+    ? pendingFile.type.startsWith('video/')
+    : isAvatarVideo(localAvatar);
 
   return (
     <div className="space-y-5 max-w-lg">
@@ -124,16 +133,31 @@ export function ProfileManager({
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="relative w-20 h-20 rounded-full bg-brand-lavender-soft overflow-hidden flex items-center justify-center shrink-0">
+        <div
+          className="relative w-24 h-24 rounded-2xl overflow-hidden flex items-center justify-center shrink-0
+                     bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft
+                     border border-brand-lavender-soft"
+        >
           {localAvatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={localAvatar}
-              alt="프로필 사진"
-              className="w-full h-full object-cover"
-            />
+            isVideoPreview ? (
+              <video
+                src={localAvatar}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={localAvatar}
+                alt="프로필 사진"
+                className="w-full h-full object-cover"
+              />
+            )
           ) : (
-            <span className="text-xl font-semibold text-neutral-900">
+            <span className="text-2xl font-semibold text-neutral-900">
               {displayName.charAt(0) || '?'}
             </span>
           )}
@@ -149,7 +173,7 @@ export function ProfileManager({
             {localAvatar ? '사진 변경' : '사진 선택'}
           </button>
           <p className="text-xs text-neutral-500">
-            jpg/png/webp · 최대 2MB
+            jpg/png/webp/gif/mp4/webm · 최대 10MB
             {pendingFile && (
               <span className="block text-warning">
                 저장 버튼을 눌러야 반영됩니다
@@ -160,7 +184,7 @@ export function ProfileManager({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept={AVATAR_ACCEPT}
           onChange={handleFileChange}
           className="hidden"
         />

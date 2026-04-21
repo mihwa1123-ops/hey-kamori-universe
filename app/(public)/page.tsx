@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { LinkPreview } from '@/components/links/LinkPreview';
 import { THEME_DEFAULTS, getFontFamily } from '@/lib/theme';
+import { isAvatarVideo } from '@/lib/avatar';
 
 export const revalidate = 60;
 
@@ -81,18 +82,35 @@ export default async function PublicHomePage() {
     >
       <div className="max-w-md mx-auto px-4 py-10 space-y-6">
         <section className="flex flex-col items-center text-center space-y-3">
-          <div className="w-[120px] h-[120px] rounded-full bg-brand-lavender-soft flex items-center justify-center overflow-hidden">
+          <div
+            className="w-full aspect-square max-h-[400px] rounded-3xl overflow-hidden
+                       bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft
+                       border border-brand-lavender-soft shadow-card"
+          >
             {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={avatarUrl}
-                alt={profile.display_name}
-                className="w-full h-full object-cover"
-              />
+              isAvatarVideo(avatarUrl) ? (
+                <video
+                  src={avatarUrl}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarUrl}
+                  alt={profile.display_name}
+                  className="w-full h-full object-cover"
+                />
+              )
             ) : (
-              <span className="text-3xl font-semibold text-neutral-900">
-                {profile.display_name.charAt(0)}
-              </span>
+              <div className="flex items-center justify-center w-full h-full">
+                <span className="text-6xl font-semibold text-neutral-900">
+                  {profile.display_name.charAt(0)}
+                </span>
+              </div>
             )}
           </div>
           <h1 className="text-2xl font-semibold text-neutral-900">

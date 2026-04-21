@@ -1,14 +1,25 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-
-const MAX_SIZE = 2 * 1024 * 1024;
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
+import { AVATAR_MAX_SIZE, AVATAR_MIME_ALLOWED } from '@/lib/avatar';
 
 function extFromMime(mime: string): string {
-  if (mime === 'image/jpeg') return 'jpg';
-  if (mime === 'image/png') return 'png';
-  return 'webp';
+  switch (mime) {
+    case 'image/jpeg':
+      return 'jpg';
+    case 'image/png':
+      return 'png';
+    case 'image/webp':
+      return 'webp';
+    case 'image/gif':
+      return 'gif';
+    case 'video/mp4':
+      return 'mp4';
+    case 'video/webm':
+      return 'webm';
+    default:
+      return 'bin';
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -30,15 +41,15 @@ export async function POST(request: NextRequest) {
   if (!(file instanceof File)) {
     return NextResponse.json({ error: '파일이 필요합니다' }, { status: 400 });
   }
-  if (!ALLOWED.includes(file.type)) {
+  if (!AVATAR_MIME_ALLOWED.includes(file.type as (typeof AVATAR_MIME_ALLOWED)[number])) {
     return NextResponse.json(
-      { error: '지원하지 않는 형식 (jpg/png/webp만 가능)' },
+      { error: '지원하지 않는 형식 (jpg/png/webp/gif/mp4/webm만 가능)' },
       { status: 400 }
     );
   }
-  if (file.size > MAX_SIZE) {
+  if (file.size > AVATAR_MAX_SIZE) {
     return NextResponse.json(
-      { error: '파일 크기는 최대 2MB 입니다' },
+      { error: '파일 크기는 최대 10MB 입니다' },
       { status: 400 }
     );
   }

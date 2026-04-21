@@ -1,5 +1,7 @@
 'use client';
 
+import { isAvatarVideo } from '@/lib/avatar';
+
 type PreviewProfile = {
   display_name: string;
   bio: string | null;
@@ -33,18 +35,35 @@ export function PhonePreview({
       <div className="rounded-[2rem] overflow-hidden bg-brand-cream">
         <div className="h-[560px] overflow-y-auto px-4 py-6">
           <section className="flex flex-col items-center text-center space-y-2">
-            <div className="w-20 h-20 rounded-full bg-brand-lavender-soft overflow-hidden flex items-center justify-center">
+            <div
+              className="w-full aspect-square rounded-2xl overflow-hidden
+                         bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft
+                         border border-brand-lavender-soft"
+            >
               {profile.avatar_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={profile.avatar_url}
-                  alt={profile.display_name}
-                  className="w-full h-full object-cover"
-                />
+                isAvatarVideo(profile.avatar_url) ? (
+                  <video
+                    src={profile.avatar_url}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={profile.avatar_url}
+                    alt={profile.display_name}
+                    className="w-full h-full object-cover"
+                  />
+                )
               ) : (
-                <span className="text-xl font-semibold text-neutral-900">
-                  {profile.display_name.charAt(0)}
-                </span>
+                <div className="flex items-center justify-center w-full h-full">
+                  <span className="text-3xl font-semibold text-neutral-900">
+                    {profile.display_name.charAt(0)}
+                  </span>
+                </div>
               )}
             </div>
             <h1 className="text-base font-semibold text-neutral-900">
