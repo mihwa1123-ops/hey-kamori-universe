@@ -150,6 +150,12 @@ export default async function PublicHomePage({
                 loop
                 muted
                 playsInline
+                style={{
+                  maskImage:
+                    'linear-gradient(to bottom, black 50%, transparent 100%)',
+                  WebkitMaskImage:
+                    'linear-gradient(to bottom, black 50%, transparent 100%)',
+                }}
               />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
@@ -157,29 +163,34 @@ export default async function PublicHomePage({
                 src={avatarUrl}
                 alt={profile.display_name}
                 className="block w-full h-full object-cover"
+                style={{
+                  maskImage:
+                    'linear-gradient(to bottom, black 50%, transparent 100%)',
+                  WebkitMaskImage:
+                    'linear-gradient(to bottom, black 50%, transparent 100%)',
+                }}
               />
             )
           ) : (
             <div
               className="flex items-center justify-center w-full h-full
                          bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft"
+              style={{
+                maskImage:
+                  'linear-gradient(to bottom, black 50%, transparent 100%)',
+                WebkitMaskImage:
+                  'linear-gradient(to bottom, black 50%, transparent 100%)',
+              }}
             >
               <span className="text-6xl font-semibold text-neutral-900">
                 {profile.display_name.charAt(0)}
               </span>
             </div>
           )}
-          <div
-            className="pointer-events-none absolute left-0 right-0 bottom-[-1px] h-3/5"
-            style={{
-              backgroundImage: `linear-gradient(to bottom, transparent 0%, ${appliedTheme.bg_color_1} 70%, ${appliedTheme.bg_color_1} 100%)`,
-              backgroundColor: appliedTheme.bg_color_1,
-            }}
-          />
         </div>
 
         <div
-          className="px-4 pb-10 -mt-8 relative space-y-6"
+          className="px-4 pb-10 -mt-10 relative space-y-6"
           style={{ backgroundColor: appliedTheme.bg_color_1 }}
         >
           <section className="text-center space-y-2">
