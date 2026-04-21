@@ -1,41 +1,73 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ========================================
+# hey.kamori - .gitignore
+# ========================================
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# 의존성 (다른 컴퓨터에서는 pnpm install로 다시 받음)
+node_modules/
+.pnpm-store/
 
-# testing
-/coverage
+# Next.js 빌드 결과
+.next/
+out/
+build/
+dist/
 
-# next.js
-/.next/
-/out/
+# 환경 변수 (API 키 유출 방지 — 절대 Git에 올리지 말 것!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# 디버그 로그
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# vercel
-.vercel
+# 에디터 설정
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
 
-# typescript
+# TypeScript 캐시
 *.tsbuildinfo
 next-env.d.ts
+
+# 테스트 커버리지
+coverage/
+.nyc_output/
+
+# Supabase 로컬 데이터
+supabase/.branches
+supabase/.temp
+supabase/.env
+
+# Vercel
+.vercel
+
+# Sentry (에러 트래킹 추가 시)
+.sentryclirc
+
+# Claude Code 임시 파일
+.claude/cache/
+.claude/logs/
+
+# Playwright (E2E 테스트 추가 시)
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# 임시 작업 파일
+*.tmp
+*.bak
+TODO.local.md

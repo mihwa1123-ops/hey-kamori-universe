@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(git pull)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(supabase:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(echo:*)",
+      "Read(**)",
+      "Edit(app/**)",
+      "Edit(components/**)",
+      "Edit(lib/**)",
+      "Edit(types/**)",
+      "Edit(supabase/migrations/**)",
+      "Edit(public/**)",
+      "Edit(.claude/**)",
+      "Edit(CLAUDE.md)",
+      "Edit(SPEC.md)",
+      "Edit(DB_SCHEMA.md)",
+      "Edit(DESIGN_TOKENS.md)",
+      "Edit(GLOSSARY.md)",
+      "Edit(WORKFLOW.md)",
+      "Edit(package.json)",
+      "Edit(tailwind.config.ts)",
+      "Edit(next.config.ts)",
+      "Edit(tsconfig.json)",
+      "Edit(middleware.ts)",
+      "Edit(components.json)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Edit(.env)",
+      "Edit(.env.local)",
+      "Edit(.env.production)",
+      "Edit(node_modules/**)",
+      "Edit(.next/**)",
+      "Edit(.git/**)",
+      "Read(.env.local)",
+      "Read(.env.production)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm pre-deploy"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(pnpm db:push*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚠️  DB 마이그레이션을 실행합니다. 사용자 확인이 필요합니다.'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit(supabase/migrations/**)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '📝 마이그레이션 파일이 수정되었습니다. DB_SCHEMA.md도 업데이트했는지 확인하세요.'"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit(DB_SCHEMA.md)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '🗄  DB_SCHEMA.md가 변경되었습니다. supabase/migrations/에 마이그레이션 SQL을 추가하세요.'"
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "CLAUDE_PROJECT_NAME": "hey-kamori"
+  }
+}
