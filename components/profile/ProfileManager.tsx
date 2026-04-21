@@ -30,29 +30,70 @@ export function ProfileManager({
   const [youtube, setYoutube] = useState(profile.social_youtube ?? '');
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState('');
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [localAvatar, setLocalAvatar] = useState<string | null>(avatarUrl);
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (pendingFile) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalAvatar(avatarUrl);
-  }, [avatarUrl]);
+  }, [avatarUrl, pendingFile]);
 
   const dirty =
     displayName !== profile.display_name ||
     bio !== profile.bio ||
     instagram !== (profile.social_instagram ?? '') ||
     twitter !== (profile.social_twitter ?? '') ||
-    youtube !== (profile.social_youtube ?? '');
+    youtube !== (profile.social_youtube ?? '') ||
+    pendingFile !== null;
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setErrorMsg('지원하지 않는 형식 (jpg/png/webp만 가능)');
+      if (e.target) e.target.value = '';
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setErrorMsg('파일 크기는 최대 2MB 입니다');
+      if (e.target) e.target.value = '';
+      return;
+    }
+
+    setErrorMsg('');
+    setPendingFile(file);
+    setLocalAvatar(URL.createObjectURL(file));
+    if (e.target) e.target.value = '';
+  };
 
   const handleSave = () => {
     if (!dirty) return;
     setStatus('saving');
     setErrorMsg('');
+
     startTransition(async () => {
+      if (pendingFile) {
+        const formData = new FormData();
+        formData.append('file', pendingFile);
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!res.ok) {
+          const body = (await res.json().catch(() => ({}))) as {
+            error?: string;
+          };
+          setStatus('error');
+          setErrorMsg(body.error ?? '사진 업로드 실패');
+          return;
+        }
+        setPendingFile(null);
+      }
+
       const result = await updateProfile({
         display_name: displayName,
         bio,
@@ -65,45 +106,12 @@ export function ProfileManager({
         setErrorMsg(result.error);
         return;
       }
+
       setStatus('saved');
       router.refresh();
       if (savedTimer.current) clearTimeout(savedTimer.current);
       savedTimer.current = setTimeout(() => setStatus('idle'), 1500);
     });
-  };
-
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const preview = URL.createObjectURL(file);
-    setLocalAvatar(preview);
-    setUploading(true);
-    setUploadError('');
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(body.error ?? '업로드 실패');
-      }
-      router.refresh();
-      setStatus('saved');
-      if (savedTimer.current) clearTimeout(savedTimer.current);
-      savedTimer.current = setTimeout(() => setStatus('idle'), 1500);
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : '업로드 실패');
-      setLocalAvatar(avatarUrl);
-    } finally {
-      setUploading(false);
-      if (e.target) e.target.value = '';
-    }
   };
 
   const bioLen = bio.length;
@@ -129,24 +137,25 @@ export function ProfileManager({
               {displayName.charAt(0) || '?'}
             </span>
           )}
-          {uploading && (
-            <div className="absolute inset-0 bg-neutral-900/40 flex items-center justify-center">
-              <span className="text-[10px] text-white">업로드 중…</span>
-            </div>
-          )}
         </div>
         <div className="space-y-1">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
+            disabled={isPending}
             className="h-10 px-4 rounded-2xl border border-neutral-200 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors
                        disabled:opacity-50"
           >
-            {localAvatar ? '사진 변경' : '사진 업로드'}
+            {localAvatar ? '사진 변경' : '사진 선택'}
           </button>
-          <p className="text-xs text-neutral-500">jpg/png/webp · 최대 2MB</p>
-          {uploadError && <p className="text-xs text-danger">{uploadError}</p>}
+          <p className="text-xs text-neutral-500">
+            jpg/png/webp · 최대 2MB
+            {pendingFile && (
+              <span className="block text-warning">
+                저장 버튼을 눌러야 반영됩니다
+              </span>
+            )}
+          </p>
         </div>
         <input
           ref={fileInputRef}

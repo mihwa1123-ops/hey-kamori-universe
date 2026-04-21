@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { LinkPreview } from '@/components/links/LinkPreview';
+import { THEME_DEFAULTS, getFontFamily } from '@/lib/theme';
 
 export const revalidate = 60;
 
@@ -49,16 +50,13 @@ export default async function PublicHomePage() {
 
   const { data: theme } = await supabase
     .from('themes')
-    .select('bg_color_1, button_bg, button_text, button_border')
+    .select(
+      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family'
+    )
     .eq('profile_id', profile.id)
     .maybeSingle();
 
-  const appliedTheme = theme ?? {
-    bg_color_1: '#FDF9F3',
-    button_bg: '#FFFFFF',
-    button_text: '#2D2A3E',
-    button_border: '#E5DFF5',
-  };
+  const appliedTheme = theme ?? THEME_DEFAULTS;
 
   const { data: links } = await supabase
     .from('links')
@@ -75,7 +73,10 @@ export default async function PublicHomePage() {
   return (
     <main
       className="min-h-screen"
-      style={{ backgroundColor: appliedTheme.bg_color_1 }}
+      style={{
+        backgroundColor: appliedTheme.bg_color_1,
+        fontFamily: getFontFamily(appliedTheme.font_family),
+      }}
     >
       <div className="max-w-md mx-auto px-4 py-10 space-y-6">
         <section className="flex flex-col items-center text-center space-y-3">

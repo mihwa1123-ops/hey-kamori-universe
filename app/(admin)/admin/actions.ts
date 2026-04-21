@@ -171,9 +171,17 @@ export type ThemeInput = {
   button_bg: string;
   button_text: string;
   button_border: string;
+  button_style: 'solid' | 'glass' | 'outline';
+  button_radius: 'square' | 'round' | 'rounder' | 'full';
+  button_shadow: 'none' | 'soft' | 'strong' | 'hard';
+  font_family: 'pretendard' | 'noto-kr' | 'noto-jp' | 'plex-kr';
 };
 
 const HEX_RE = /^#[0-9A-F]{6}$/i;
+const STYLES = ['solid', 'glass', 'outline'] as const;
+const RADII = ['square', 'round', 'rounder', 'full'] as const;
+const SHADOWS = ['none', 'soft', 'strong', 'hard'] as const;
+const FONTS = ['pretendard', 'noto-kr', 'noto-jp', 'plex-kr'] as const;
 
 export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
@@ -188,6 +196,18 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
       return { error: '색상 형식이 올바르지 않습니다 (#RRGGBB)' };
     }
   }
+  if (!STYLES.includes(input.button_style)) {
+    return { error: '잘못된 버튼 스타일 값' };
+  }
+  if (!RADII.includes(input.button_radius)) {
+    return { error: '잘못된 모서리 값' };
+  }
+  if (!SHADOWS.includes(input.button_shadow)) {
+    return { error: '잘못된 그림자 값' };
+  }
+  if (!FONTS.includes(input.font_family)) {
+    return { error: '잘못된 폰트 값' };
+  }
 
   const { error } = await supabase.from('themes').upsert(
     {
@@ -196,6 +216,10 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
       button_bg: input.button_bg.toUpperCase(),
       button_text: input.button_text.toUpperCase(),
       button_border: input.button_border.toUpperCase(),
+      button_style: input.button_style,
+      button_radius: input.button_radius,
+      button_shadow: input.button_shadow,
+      font_family: input.font_family,
     },
     { onConflict: 'profile_id' }
   );

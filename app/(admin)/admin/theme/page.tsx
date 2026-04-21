@@ -11,7 +11,9 @@ export default async function AdminThemePage() {
 
   const { data: theme } = await supabase
     .from('themes')
-    .select('bg_color_1, button_bg, button_text, button_border')
+    .select(
+      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family'
+    )
     .eq('profile_id', user.id)
     .maybeSingle();
 

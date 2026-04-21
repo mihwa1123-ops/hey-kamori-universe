@@ -1,6 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
+import { buildButtonStyle } from '@/lib/theme';
 
 type LinkData = {
   id: string;
@@ -12,6 +13,9 @@ type LinkTheme = {
   button_bg: string;
   button_text: string;
   button_border: string;
+  button_style: string;
+  button_radius: string;
+  button_shadow: string;
 };
 
 export function LinkPreview({
@@ -38,11 +42,7 @@ export function LinkPreview({
   };
 
   const themedStyle: CSSProperties | undefined = theme
-    ? {
-        backgroundColor: theme.button_bg,
-        color: theme.button_text,
-        borderColor: theme.button_border,
-      }
+    ? buildButtonStyle(theme)
     : undefined;
 
   return (
@@ -52,11 +52,11 @@ export function LinkPreview({
       rel="noopener"
       onClick={handleClick}
       style={themedStyle}
-      className="flex items-center justify-center h-14 rounded-2xl bg-white border border-brand-lavender-soft
-                 px-4 text-base font-medium text-neutral-900
-                 shadow-soft transition-all duration-200
-                 hover:shadow-hover hover:-translate-y-0.5
-                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2"
+      className="flex items-center justify-center h-14 px-4 font-medium text-base
+                 transition-all duration-200
+                 hover:-translate-y-0.5
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2
+                 [&:not([style])]:rounded-2xl [&:not([style])]:bg-white [&:not([style])]:border [&:not([style])]:border-brand-lavender-soft [&:not([style])]:text-neutral-900 [&:not([style])]:shadow-soft"
     >
       {link.title}
     </a>

@@ -170,6 +170,7 @@ export type Database = {
           button_border: string
           button_radius: string
           button_shadow: string
+          button_style: string
           button_text: string
           font_family: string
           profile_id: string
@@ -184,6 +185,7 @@ export type Database = {
           button_border?: string
           button_radius?: string
           button_shadow?: string
+          button_style?: string
           button_text?: string
           font_family?: string
           profile_id: string
@@ -198,6 +200,7 @@ export type Database = {
           button_border?: string
           button_radius?: string
           button_shadow?: string
+          button_style?: string
           button_text?: string
           font_family?: string
           profile_id?: string
