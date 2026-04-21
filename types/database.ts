@@ -127,6 +127,7 @@ export type Database = {
           bio: string
           created_at: string
           display_name: string
+          footer_text: string | null
           id: string
           social_instagram: string | null
           social_twitter: string | null
@@ -139,6 +140,7 @@ export type Database = {
           bio?: string
           created_at?: string
           display_name: string
+          footer_text?: string | null
           id: string
           social_instagram?: string | null
           social_twitter?: string | null
@@ -151,6 +153,7 @@ export type Database = {
           bio?: string
           created_at?: string
           display_name?: string
+          footer_text?: string | null
           id?: string
           social_instagram?: string | null
           social_twitter?: string | null
@@ -166,12 +169,14 @@ export type Database = {
           bg_color_2: string | null
           bg_image_path: string | null
           bg_type: string
+          bio_color: string
           button_bg: string
           button_border: string
           button_radius: string
           button_shadow: string
           button_style: string
           button_text: string
+          display_name_color: string
           font_family: string
           font_weight: string
           profile_id: string
@@ -182,12 +187,14 @@ export type Database = {
           bg_color_2?: string | null
           bg_image_path?: string | null
           bg_type?: string
+          bio_color?: string
           button_bg?: string
           button_border?: string
           button_radius?: string
           button_shadow?: string
           button_style?: string
           button_text?: string
+          display_name_color?: string
           font_family?: string
           font_weight?: string
           profile_id: string
@@ -198,12 +205,14 @@ export type Database = {
           bg_color_2?: string | null
           bg_image_path?: string | null
           bg_type?: string
+          bio_color?: string
           button_bg?: string
           button_border?: string
           button_radius?: string
           button_shadow?: string
           button_style?: string
           button_text?: string
+          display_name_color?: string
           font_family?: string
           font_weight?: string
           profile_id?: string

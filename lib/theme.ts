@@ -10,6 +10,8 @@ export type AppliedTheme = {
   button_shadow: string;
   font_family: string;
   font_weight: string;
+  display_name_color: string;
+  bio_color: string;
 };
 
 export const THEME_DEFAULTS: AppliedTheme = {
@@ -22,6 +24,8 @@ export const THEME_DEFAULTS: AppliedTheme = {
   button_shadow: 'soft',
   font_family: 'pretendard',
   font_weight: '500',
+  display_name_color: '#2D2A3E',
+  bio_color: '#737373',
 };
 
 const RADIUS_MAP: Record<string, string> = {

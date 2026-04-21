@@ -11,9 +11,7 @@ export default async function AdminProfilePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select(
-      'display_name, bio, avatar_path, updated_at, social_instagram, social_twitter, social_youtube'
-    )
+    .select('display_name, bio, avatar_path, updated_at, footer_text')
     .eq('id', user.id)
     .maybeSingle();
 
@@ -56,7 +54,11 @@ export default async function AdminProfilePage() {
           </Link>
         </nav>
         <ProfileManager
-          profile={{ ...profile, bio: profile.bio ?? '' }}
+          profile={{
+            display_name: profile.display_name,
+            bio: profile.bio ?? '',
+            footer_text: profile.footer_text ?? 'Made with 💜 by kamori',
+          }}
           avatarUrl={avatarUrl}
         />
       </div>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { LinkManager } from '@/components/links/LinkManager';
+import { THEME_DEFAULTS } from '@/lib/theme';
 
 export default async function AdminHomePage() {
   const supabase = await createClient();
@@ -10,21 +11,27 @@ export default async function AdminHomePage() {
 
   if (!user) return null;
 
-  const [{ data: profile }, { data: links }] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select(
-        'display_name, bio, avatar_path, updated_at, social_instagram, social_twitter, social_youtube'
-      )
-      .eq('id', user.id)
-      .maybeSingle(),
-    supabase
-      .from('links')
-      .select('id, title, url, is_public, click_count, display_order')
-      .eq('profile_id', user.id)
-      .order('display_order', { ascending: true })
-      .order('created_at', { ascending: false }),
-  ]);
+  const [{ data: profile }, { data: links }, { data: theme }] =
+    await Promise.all([
+      supabase
+        .from('profiles')
+        .select('display_name, bio, avatar_path, updated_at, footer_text')
+        .eq('id', user.id)
+        .maybeSingle(),
+      supabase
+        .from('links')
+        .select('id, title, url, is_public, click_count, display_order')
+        .eq('profile_id', user.id)
+        .order('display_order', { ascending: true })
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('themes')
+        .select(
+          'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family, font_weight, display_name_color, bio_color'
+        )
+        .eq('profile_id', user.id)
+        .maybeSingle(),
+    ]);
 
   if (!profile) {
     return (
@@ -66,7 +73,13 @@ export default async function AdminHomePage() {
         </nav>
         <LinkManager
           links={links ?? []}
-          profile={{ ...profile, avatar_url: avatarUrl }}
+          profile={{
+            display_name: profile.display_name,
+            bio: profile.bio,
+            avatar_url: avatarUrl,
+            footer_text: profile.footer_text ?? null,
+          }}
+          theme={theme ?? THEME_DEFAULTS}
         />
       </div>
     </div>

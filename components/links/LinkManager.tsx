@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PhonePreview } from '@/components/preview/PhonePreview';
+import type { AppliedTheme } from '@/lib/theme';
 import {
   createLink,
   deleteLink,
@@ -56,9 +57,7 @@ type LinkManagerProfile = {
   display_name: string;
   bio: string | null;
   avatar_url: string | null;
-  social_instagram: string | null;
-  social_twitter: string | null;
-  social_youtube: string | null;
+  footer_text: string | null;
 };
 
 type ModalState =
@@ -69,9 +68,11 @@ type ModalState =
 export function LinkManager({
   links,
   profile,
+  theme,
 }: {
   links: LinkRow[];
   profile: LinkManagerProfile;
+  theme: AppliedTheme;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -354,7 +355,7 @@ export function LinkManager({
 
       <aside className="hidden lg:block lg:w-80 lg:shrink-0 lg:sticky lg:top-6">
         <p className="text-xs text-neutral-500 text-center mb-2">실시간 미리보기</p>
-        <PhonePreview profile={profile} links={items} />
+        <PhonePreview profile={profile} links={items} theme={theme} />
       </aside>
     </div>
   );

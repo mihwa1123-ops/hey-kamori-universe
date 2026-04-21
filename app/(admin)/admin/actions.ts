@@ -113,18 +113,8 @@ export async function toggleLinkPublic(
 export type ProfileInput = {
   display_name: string;
   bio: string;
-  social_instagram: string | null;
-  social_twitter: string | null;
-  social_youtube: string | null;
+  footer_text: string;
 };
-
-function validateSocialUrl(url: string | null): string | null {
-  if (url === null || url === '') return null;
-  if (!/^https?:\/\/.+/i.test(url)) {
-    return 'URL은 http:// 또는 https://로 시작해야 합니다';
-  }
-  return null;
-}
 
 export async function updateProfile(
   input: ProfileInput
@@ -133,19 +123,15 @@ export async function updateProfile(
 
   const display_name = input.display_name.trim();
   const bio = input.bio;
+  const footer_text = input.footer_text.trim();
   if (display_name.length < 1 || display_name.length > 30) {
     return { error: '닉네임은 1-30자여야 합니다' };
   }
   if (bio.length > 100) {
     return { error: '내용은 최대 100자입니다' };
   }
-  for (const social of [
-    input.social_instagram,
-    input.social_twitter,
-    input.social_youtube,
-  ]) {
-    const err = validateSocialUrl(social);
-    if (err) return { error: err };
+  if (footer_text.length > 60) {
+    return { error: '푸터 문구는 최대 60자입니다' };
   }
 
   const { error } = await supabase
@@ -153,9 +139,7 @@ export async function updateProfile(
     .update({
       display_name,
       bio,
-      social_instagram: input.social_instagram || null,
-      social_twitter: input.social_twitter || null,
-      social_youtube: input.social_youtube || null,
+      footer_text: footer_text || null,
     })
     .eq('id', user.id);
 
@@ -176,6 +160,8 @@ export type ThemeInput = {
   button_shadow: 'none' | 'soft' | 'strong' | 'hard';
   font_family: 'pretendard' | 'noto-kr' | 'noto-jp' | 'plex-kr';
   font_weight: '300' | '500' | '700';
+  display_name_color: string;
+  bio_color: string;
 };
 
 const HEX_RE = /^#[0-9A-F]{6}$/i;
@@ -193,6 +179,8 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
     input.button_bg,
     input.button_text,
     input.button_border,
+    input.display_name_color,
+    input.bio_color,
   ]) {
     if (!HEX_RE.test(color)) {
       return { error: '색상 형식이 올바르지 않습니다 (#RRGGBB)' };
@@ -226,6 +214,8 @@ export async function updateTheme(input: ThemeInput): Promise<ActionResult> {
       button_shadow: input.button_shadow,
       font_family: input.font_family,
       font_weight: input.font_weight,
+      display_name_color: input.display_name_color.toUpperCase(),
+      bio_color: input.bio_color.toUpperCase(),
     },
     { onConflict: 'profile_id' }
   );

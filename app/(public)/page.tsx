@@ -52,7 +52,7 @@ export default async function PublicHomePage() {
   const { data: theme } = await supabase
     .from('themes')
     .select(
-      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family, font_weight'
+      'bg_color_1, button_bg, button_text, button_border, button_style, button_radius, button_shadow, font_family, font_weight, display_name_color, bio_color'
     )
     .eq('profile_id', profile.id)
     .maybeSingle();
@@ -67,9 +67,7 @@ export default async function PublicHomePage() {
     .order('created_at', { ascending: false });
 
   const hasLinks = (links?.length ?? 0) > 0;
-  const hasSocial = Boolean(
-    profile.social_instagram || profile.social_twitter || profile.social_youtube
-  );
+  const footerText = profile.footer_text ?? 'Made with 💜 by kamori';
 
   return (
     <main
@@ -120,66 +118,44 @@ export default async function PublicHomePage() {
 
         <div className="px-4 pb-10 -mt-4 relative space-y-6">
           <section className="text-center space-y-2">
-            <h1 className="text-2xl font-semibold text-neutral-900">
+            <h1
+              className="text-2xl font-semibold"
+              style={{ color: appliedTheme.display_name_color }}
+            >
               {profile.display_name}
             </h1>
             {profile.bio && (
-              <p className="text-sm text-neutral-500 leading-relaxed whitespace-pre-line">
+              <p
+                className="text-sm leading-relaxed whitespace-pre-line"
+                style={{ color: appliedTheme.bio_color }}
+              >
                 {profile.bio}
               </p>
             )}
           </section>
 
-        {hasSocial && (
-          <section className="flex justify-center gap-3 text-sm">
-            {profile.social_instagram && (
-              <a
-                href={profile.social_instagram}
-                target="_blank"
-                rel="noopener"
-                className="inline-flex items-center justify-center h-11 px-3 rounded-full text-neutral-700 hover:bg-brand-pink-soft transition-colors"
-              >
-                Instagram
-              </a>
-            )}
-            {profile.social_twitter && (
-              <a
-                href={profile.social_twitter}
-                target="_blank"
-                rel="noopener"
-                className="inline-flex items-center justify-center h-11 px-3 rounded-full text-neutral-700 hover:bg-brand-pink-soft transition-colors"
-              >
-                Twitter
-              </a>
-            )}
-            {profile.social_youtube && (
-              <a
-                href={profile.social_youtube}
-                target="_blank"
-                rel="noopener"
-                className="inline-flex items-center justify-center h-11 px-3 rounded-full text-neutral-700 hover:bg-brand-pink-soft transition-colors"
-              >
-                YouTube
-              </a>
-            )}
-          </section>
-        )}
+          {hasLinks ? (
+            <section className="flex flex-col gap-3">
+              {links!.map((link) => (
+                <LinkPreview key={link.id} link={link} theme={appliedTheme} />
+              ))}
+            </section>
+          ) : (
+            <section className="py-10 text-center">
+              <p className="text-sm text-neutral-500">준비 중이에요 🌱</p>
+            </section>
+          )}
 
-        {hasLinks ? (
-          <section className="flex flex-col gap-3">
-            {links!.map((link) => (
-              <LinkPreview key={link.id} link={link} theme={appliedTheme} />
-            ))}
-          </section>
-        ) : (
-          <section className="py-10 text-center">
-            <p className="text-sm text-neutral-500">준비 중이에요 🌱</p>
-          </section>
-        )}
-
-          <footer className="pt-6 text-center">
-            <p className="text-xs text-neutral-500">Made with 💜 by kamori</p>
-          </footer>
+          {footerText && (
+            <footer className="pt-6 text-center">
+              <p
+                className="text-xs"
+                style={{ color: appliedTheme.bio_color }}
+              >
+                {footerText}
+              </p>
+            </footer>
+          )}
         </div>
       </div>
     </main>

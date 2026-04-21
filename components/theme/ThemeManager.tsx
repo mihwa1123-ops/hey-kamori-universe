@@ -104,6 +104,8 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
           | 'noto-jp'
           | 'plex-kr',
         font_weight: state.font_weight as '300' | '500' | '700',
+        display_name_color: state.display_name_color,
+        bio_color: state.bio_color,
       });
       if (result.error) {
         setError(result.error);
@@ -142,6 +144,20 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
             className="rounded-3xl p-6 space-y-3 border border-neutral-200"
             style={previewBg}
           >
+            <div className="text-center space-y-1">
+              <p
+                className="text-base font-semibold"
+                style={{ color: state.display_name_color }}
+              >
+                hey.kamori
+              </p>
+              <p
+                className="text-xs"
+                style={{ color: state.bio_color }}
+              >
+                내용 예시 텍스트
+              </p>
+            </div>
             <div
               className="h-14 flex items-center justify-center font-medium px-4"
               style={previewBtn}
@@ -164,6 +180,16 @@ export function ThemeManager({ theme }: { theme: AppliedTheme }) {
               label="배경 색상"
               value={state.bg_color_1}
               onChange={(v) => setState({ ...state, bg_color_1: v })}
+            />
+            <ColorField
+              label="닉네임 글자"
+              value={state.display_name_color}
+              onChange={(v) => setState({ ...state, display_name_color: v })}
+            />
+            <ColorField
+              label="내용 글자"
+              value={state.bio_color}
+              onChange={(v) => setState({ ...state, bio_color: v })}
             />
             <ColorField
               label="버튼 배경"

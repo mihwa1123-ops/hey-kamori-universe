@@ -13,9 +13,7 @@ import {
 type ProfileData = {
   display_name: string;
   bio: string;
-  social_instagram: string | null;
-  social_twitter: string | null;
-  social_youtube: string | null;
+  footer_text: string;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -31,9 +29,7 @@ export function ProfileManager({
   const [isPending, startTransition] = useTransition();
   const [displayName, setDisplayName] = useState(profile.display_name);
   const [bio, setBio] = useState(profile.bio);
-  const [instagram, setInstagram] = useState(profile.social_instagram ?? '');
-  const [twitter, setTwitter] = useState(profile.social_twitter ?? '');
-  const [youtube, setYoutube] = useState(profile.social_youtube ?? '');
+  const [footerText, setFooterText] = useState(profile.footer_text);
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -50,9 +46,7 @@ export function ProfileManager({
   const dirty =
     displayName !== profile.display_name ||
     bio !== profile.bio ||
-    instagram !== (profile.social_instagram ?? '') ||
-    twitter !== (profile.social_twitter ?? '') ||
-    youtube !== (profile.social_youtube ?? '') ||
+    footerText !== profile.footer_text ||
     pendingFile !== null;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -103,9 +97,7 @@ export function ProfileManager({
       const result = await updateProfile({
         display_name: displayName,
         bio,
-        social_instagram: instagram.trim() || null,
-        social_twitter: twitter.trim() || null,
-        social_youtube: youtube.trim() || null,
+        footer_text: footerText,
       });
       if (result.error) {
         setStatus('error');
@@ -121,6 +113,7 @@ export function ProfileManager({
   };
 
   const bioLen = bio.length;
+  const footerLen = footerText.length;
   const isVideoPreview = pendingFile
     ? pendingFile.type.startsWith('video/')
     : isAvatarVideo(localAvatar);
@@ -217,45 +210,19 @@ export function ProfileManager({
         />
       </Field>
 
-      <div className="space-y-3 pt-2">
-        <p className="text-sm font-medium text-neutral-700">소셜 링크 (선택)</p>
-        <Field label="Instagram" small>
-          <input
-            type="url"
-            placeholder="https://instagram.com/username"
-            value={instagram}
-            onChange={(e) => setInstagram(e.target.value)}
-            disabled={isPending}
-            className="w-full h-11 rounded-lg border border-neutral-200 bg-white px-4 text-sm text-neutral-900 placeholder-neutral-500
-                       focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
-                       disabled:opacity-50"
-          />
-        </Field>
-        <Field label="Twitter / X" small>
-          <input
-            type="url"
-            placeholder="https://x.com/username"
-            value={twitter}
-            onChange={(e) => setTwitter(e.target.value)}
-            disabled={isPending}
-            className="w-full h-11 rounded-lg border border-neutral-200 bg-white px-4 text-sm text-neutral-900 placeholder-neutral-500
-                       focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
-                       disabled:opacity-50"
-          />
-        </Field>
-        <Field label="YouTube" small>
-          <input
-            type="url"
-            placeholder="https://youtube.com/@channel"
-            value={youtube}
-            onChange={(e) => setYoutube(e.target.value)}
-            disabled={isPending}
-            className="w-full h-11 rounded-lg border border-neutral-200 bg-white px-4 text-sm text-neutral-900 placeholder-neutral-500
-                       focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
-                       disabled:opacity-50"
-          />
-        </Field>
-      </div>
+      <Field label={`푸터 문구 (${footerLen}/60자)`}>
+        <input
+          type="text"
+          maxLength={60}
+          value={footerText}
+          onChange={(e) => setFooterText(e.target.value)}
+          disabled={isPending}
+          placeholder="Made with 💜 by kamori"
+          className="w-full h-12 rounded-lg border border-neutral-200 bg-white px-4 text-base text-neutral-900 placeholder-neutral-500
+                     focus:outline-none focus:ring-2 focus:ring-brand-lavender focus:border-transparent
+                     disabled:opacity-50"
+        />
+      </Field>
 
       {errorMsg && <p className="text-sm text-danger">{errorMsg}</p>}
 
