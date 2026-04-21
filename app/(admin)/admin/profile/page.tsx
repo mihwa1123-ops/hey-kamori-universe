@@ -12,7 +12,9 @@ export default async function AdminProfilePage() {
   const [{ data: profile }, { data: theme }] = await Promise.all([
     supabase
       .from('profiles')
-      .select('display_name, bio, avatar_path, updated_at, footer_text')
+      .select(
+        'display_name, bio, avatar_path, og_image_path, updated_at, footer_text'
+      )
       .eq('id', user.id)
       .maybeSingle(),
     supabase
@@ -34,6 +36,14 @@ export default async function AdminProfilePage() {
     ? `${
         supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data
           .publicUrl
+      }?v=${encodeURIComponent(profile.updated_at)}`
+    : null;
+
+  const ogImageUrl = profile.og_image_path
+    ? `${
+        supabase.storage
+          .from('avatars')
+          .getPublicUrl(profile.og_image_path).data.publicUrl
       }?v=${encodeURIComponent(profile.updated_at)}`
     : null;
 
@@ -70,6 +80,7 @@ export default async function AdminProfilePage() {
             footer_color: theme?.footer_color ?? '#737373',
           }}
           avatarUrl={avatarUrl}
+          ogImageUrl={ogImageUrl}
         />
       </div>
     </div>

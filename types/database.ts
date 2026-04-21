@@ -129,6 +129,7 @@ export type Database = {
           display_name: string
           footer_text: string | null
           id: string
+          og_image_path: string | null
           social_instagram: string | null
           social_twitter: string | null
           social_youtube: string | null
@@ -142,6 +143,7 @@ export type Database = {
           display_name: string
           footer_text?: string | null
           id: string
+          og_image_path?: string | null
           social_instagram?: string | null
           social_twitter?: string | null
           social_youtube?: string | null
@@ -155,6 +157,7 @@ export type Database = {
           display_name?: string
           footer_text?: string | null
           id?: string
+          og_image_path?: string | null
           social_instagram?: string | null
           social_twitter?: string | null
           social_youtube?: string | null

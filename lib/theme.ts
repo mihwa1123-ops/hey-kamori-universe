@@ -41,7 +41,7 @@ const SHADOW_MAP: Record<string, string> = {
   none: 'none',
   soft: '0 2px 8px rgba(45, 42, 62, 0.06)',
   strong: '0 4px 16px rgba(45, 42, 62, 0.14)',
-  hard: '6px 6px 0 0 #2D2A3E',
+  hard: '10px 10px 0 0 #2D2A3E',
 };
 
 const FONT_MAP: Record<string, string> = {

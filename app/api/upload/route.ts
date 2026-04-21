@@ -3,6 +3,8 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { AVATAR_MAX_SIZE, AVATAR_MIME_ALLOWED } from '@/lib/avatar';
 
+const OG_ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
 function extFromMime(mime: string): string {
   switch (mime) {
     case 'image/jpeg':
@@ -35,17 +37,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '권한이 없습니다' }, { status: 403 });
   }
 
+  const type = request.nextUrl.searchParams.get('type') === 'og' ? 'og' : 'avatar';
   const formData = await request.formData();
   const file = formData.get('file');
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: '파일이 필요합니다' }, { status: 400 });
   }
-  if (!AVATAR_MIME_ALLOWED.includes(file.type as (typeof AVATAR_MIME_ALLOWED)[number])) {
-    return NextResponse.json(
-      { error: '지원하지 않는 형식 (jpg/png/webp/gif/mp4/webm만 가능)' },
-      { status: 400 }
-    );
+
+  const allowed = type === 'og' ? OG_ALLOWED : AVATAR_MIME_ALLOWED;
+  if (!(allowed as readonly string[]).includes(file.type)) {
+    const msg =
+      type === 'og'
+        ? '공유 이미지는 jpg/png/webp/gif만 가능합니다 (동영상 불가)'
+        : '지원하지 않는 형식 (jpg/png/webp/gif/mp4/webm만 가능)';
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
   if (file.size > AVATAR_MAX_SIZE) {
     return NextResponse.json(
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
   }
 
   const ext = extFromMime(file.type);
-  const path = `${user.id}/avatar.${ext}`;
+  const path = `${user.id}/${type}.${ext}`;
 
   const { error: upErr } = await supabase.storage
     .from('avatars')
@@ -65,10 +71,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: upErr.message }, { status: 500 });
   }
 
-  const { error: dbErr } = await supabase
-    .from('profiles')
-    .update({ avatar_path: path })
-    .eq('id', user.id);
+  const { error: dbErr } =
+    type === 'og'
+      ? await supabase
+          .from('profiles')
+          .update({ og_image_path: path })
+          .eq('id', user.id)
+      : await supabase
+          .from('profiles')
+          .update({ avatar_path: path })
+          .eq('id', user.id);
 
   if (dbErr) {
     return NextResponse.json({ error: dbErr.message }, { status: 500 });

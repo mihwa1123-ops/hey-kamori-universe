@@ -24,9 +24,11 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 export function ProfileManager({
   profile,
   avatarUrl,
+  ogImageUrl,
 }: {
   profile: ProfileData;
   avatarUrl: string | null;
+  ogImageUrl: string | null;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -39,15 +41,24 @@ export function ProfileManager({
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingOgFile, setPendingOgFile] = useState<File | null>(null);
   const [localAvatar, setLocalAvatar] = useState<string | null>(avatarUrl);
+  const [localOg, setLocalOg] = useState<string | null>(ogImageUrl);
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const ogInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (pendingFile) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalAvatar(avatarUrl);
   }, [avatarUrl, pendingFile]);
+
+  useEffect(() => {
+    if (pendingOgFile) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLocalOg(ogImageUrl);
+  }, [ogImageUrl, pendingOgFile]);
 
   const dirty =
     displayName !== profile.display_name ||
@@ -56,7 +67,8 @@ export function ProfileManager({
     displayNameColor !== profile.display_name_color ||
     bioColor !== profile.bio_color ||
     footerColor !== profile.footer_color ||
-    pendingFile !== null;
+    pendingFile !== null ||
+    pendingOgFile !== null;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -76,6 +88,27 @@ export function ProfileManager({
     setErrorMsg('');
     setPendingFile(file);
     setLocalAvatar(URL.createObjectURL(file));
+    if (e.target) e.target.value = '';
+  };
+
+  const handleOgFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) {
+      setErrorMsg('공유 이미지는 jpg/png/webp/gif만 가능 (동영상 불가)');
+      if (e.target) e.target.value = '';
+      return;
+    }
+    if (file.size > AVATAR_MAX_SIZE) {
+      setErrorMsg('파일 크기는 최대 10MB 입니다');
+      if (e.target) e.target.value = '';
+      return;
+    }
+
+    setErrorMsg('');
+    setPendingOgFile(file);
+    setLocalOg(URL.createObjectURL(file));
     if (e.target) e.target.value = '';
   };
 
@@ -101,6 +134,24 @@ export function ProfileManager({
           return;
         }
         setPendingFile(null);
+      }
+
+      if (pendingOgFile) {
+        const formData = new FormData();
+        formData.append('file', pendingOgFile);
+        const res = await fetch('/api/upload?type=og', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!res.ok) {
+          const body = (await res.json().catch(() => ({}))) as {
+            error?: string;
+          };
+          setStatus('error');
+          setErrorMsg(body.error ?? '공유 이미지 업로드 실패');
+          return;
+        }
+        setPendingOgFile(null);
       }
 
       const result = await updateProfile({
@@ -191,6 +242,57 @@ export function ProfileManager({
           type="file"
           accept={AVATAR_ACCEPT}
           onChange={handleFileChange}
+          className="hidden"
+        />
+      </div>
+
+      <div className="flex items-start gap-4">
+        <div
+          className="relative w-40 aspect-[16/9] rounded-xl overflow-hidden flex items-center justify-center shrink-0
+                     bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft
+                     border border-brand-lavender-soft"
+        >
+          {localOg ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={localOg}
+              alt="공유 이미지"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-xs text-neutral-500 text-center px-2">
+              공유 이미지 없음
+            </span>
+          )}
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-neutral-700">
+            링크 공유 이미지
+          </p>
+          <button
+            type="button"
+            onClick={() => ogInputRef.current?.click()}
+            disabled={isPending}
+            className="h-10 px-4 rounded-2xl border border-neutral-200 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors
+                       disabled:opacity-50"
+          >
+            {localOg ? '공유 이미지 변경' : '공유 이미지 선택'}
+          </button>
+          <p className="text-xs text-neutral-500">
+            jpg/png/webp/gif · 동영상 불가 · 최대 10MB
+            <span className="block">메신저 썸네일에 쓰여요</span>
+            {pendingOgFile && (
+              <span className="block text-warning">
+                저장 버튼을 눌러야 반영됩니다
+              </span>
+            )}
+          </p>
+        </div>
+        <input
+          ref={ogInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onChange={handleOgFileChange}
           className="hidden"
         />
       </div>

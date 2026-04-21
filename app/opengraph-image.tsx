@@ -10,15 +10,19 @@ export default async function OpenGraphImage() {
   const supabase = await createClient();
   const { data: profile } = await supabase
     .from('profiles')
-    .select('display_name, bio, avatar_path, updated_at')
+    .select('display_name, bio, avatar_path, og_image_path, updated_at')
     .limit(1)
     .maybeSingle();
 
-  const avatarUrl =
-    profile?.avatar_path && !isAvatarVideo(profile.avatar_path)
-      ? supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data
-          .publicUrl
-      : null;
+  const chosenPath =
+    profile?.og_image_path ??
+    (profile?.avatar_path && !isAvatarVideo(profile.avatar_path)
+      ? profile.avatar_path
+      : null);
+
+  const avatarUrl = chosenPath
+    ? supabase.storage.from('avatars').getPublicUrl(chosenPath).data.publicUrl
+    : null;
 
   const displayName = profile?.display_name ?? 'hey.kamori';
   const bio = profile?.bio ?? '';
