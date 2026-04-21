@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hey-kamori-universe.vercel.app';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'hey.kamori',
   description: '카모리의 작은 링크 허브',
 };

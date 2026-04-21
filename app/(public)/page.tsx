@@ -15,13 +15,23 @@ export async function generateMetadata(): Promise<Metadata> {
     .maybeSingle();
 
   const title = profile?.display_name ?? 'hey.kamori';
-  const description = profile?.bio ?? '';
+  const description = profile?.bio ?? '카모리의 작은 링크 허브 💜';
 
   return {
     title,
     description,
     robots: { index: true, follow: true },
-    openGraph: { title, description },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      siteName: 'hey.kamori',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   };
 }
 
