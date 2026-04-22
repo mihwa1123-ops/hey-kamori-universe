@@ -1,10 +1,10 @@
 export type Lang = 'ko' | 'en' | 'ja' | 'es';
 
-export const LANGS: { code: Lang; label: string; short: string }[] = [
-  { code: 'ko', label: '한국어', short: '한' },
-  { code: 'en', label: 'English', short: 'EN' },
-  { code: 'ja', label: '日本語', short: '日' },
-  { code: 'es', label: 'Español', short: 'ES' },
+export const LANGS: { code: Lang; label: string; flag: string }[] = [
+  { code: 'ko', label: '한국어', flag: '🇰🇷' },
+  { code: 'en', label: 'English', flag: '🇦🇺' },
+  { code: 'ja', label: '日本語', flag: '🇯🇵' },
+  { code: 'es', label: 'Español', flag: '🇪🇸' },
 ];
 
 type TranslationKey =

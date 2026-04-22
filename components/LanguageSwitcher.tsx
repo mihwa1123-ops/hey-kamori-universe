@@ -65,11 +65,11 @@ export function LanguageSwitcher({
         onClick={() => setOpen((o) => !o)}
         aria-label="언어 선택"
         style={triggerStyle}
-        className="w-11 h-11 text-sm transition-all duration-200
+        className="w-11 h-11 text-xl leading-none transition-all duration-200
                    hover:-translate-y-0.5
                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2"
       >
-        {currentLang.short}
+        {currentLang.flag}
       </button>
       {open && (
         <ul
@@ -85,13 +85,14 @@ export function LanguageSwitcher({
                 onClick={() => switchTo(l.code)}
                 style={itemBaseStyle}
                 className={cn(
-                  'w-full text-left px-3 py-2 text-sm transition-colors',
+                  'w-full text-left px-3 py-2 text-sm transition-colors flex items-center gap-2',
                   l.code === current
                     ? 'bg-brand-lavender-soft text-neutral-900 font-medium'
                     : 'text-neutral-700 hover:bg-brand-pink-soft'
                 )}
               >
-                {l.label}
+                <span className="text-base leading-none">{l.flag}</span>
+                <span>{l.label}</span>
               </button>
             </li>
           ))}
