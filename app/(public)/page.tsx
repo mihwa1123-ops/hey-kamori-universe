@@ -9,6 +9,10 @@ import { parseLang, t } from '@/lib/i18n';
 
 export const revalidate = 60;
 
+// 부드러운 8단계 그라데이션 — ease-out 곡선 근사
+const AVATAR_FADE_MASK =
+  'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,0.95) 50%, rgba(0,0,0,0.82) 62%, rgba(0,0,0,0.62) 72%, rgba(0,0,0,0.38) 82%, rgba(0,0,0,0.18) 92%, rgba(0,0,0,0) 100%)';
+
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
   const { data: profile } = await supabase
@@ -138,7 +142,7 @@ export default async function PublicHomePage({
           <LanguageSwitcher current={lang} theme={appliedTheme} />
         </div>
         <div
-          className="relative w-full h-[30vh] min-h-[220px] max-h-[380px] overflow-hidden"
+          className="relative w-full h-[40vh] min-h-[280px] max-h-[440px] overflow-hidden"
           style={{ backgroundColor: appliedTheme.bg_color_1 }}
         >
           {avatarUrl ? (
@@ -151,10 +155,8 @@ export default async function PublicHomePage({
                 muted
                 playsInline
                 style={{
-                  maskImage:
-                    'linear-gradient(to bottom, black 50%, transparent 100%)',
-                  WebkitMaskImage:
-                    'linear-gradient(to bottom, black 50%, transparent 100%)',
+                  maskImage: AVATAR_FADE_MASK,
+                  WebkitMaskImage: AVATAR_FADE_MASK,
                 }}
               />
             ) : (
@@ -164,10 +166,8 @@ export default async function PublicHomePage({
                 alt={profile.display_name}
                 className="block w-full h-full object-cover"
                 style={{
-                  maskImage:
-                    'linear-gradient(to bottom, black 50%, transparent 100%)',
-                  WebkitMaskImage:
-                    'linear-gradient(to bottom, black 50%, transparent 100%)',
+                  maskImage: AVATAR_FADE_MASK,
+                  WebkitMaskImage: AVATAR_FADE_MASK,
                 }}
               />
             )
@@ -176,10 +176,8 @@ export default async function PublicHomePage({
               className="flex items-center justify-center w-full h-full
                          bg-gradient-to-br from-brand-pink-soft via-brand-cream to-brand-lavender-soft"
               style={{
-                maskImage:
-                  'linear-gradient(to bottom, black 50%, transparent 100%)',
-                WebkitMaskImage:
-                  'linear-gradient(to bottom, black 50%, transparent 100%)',
+                maskImage: AVATAR_FADE_MASK,
+                WebkitMaskImage: AVATAR_FADE_MASK,
               }}
             >
               <span className="text-6xl font-semibold text-neutral-900">
@@ -189,10 +187,7 @@ export default async function PublicHomePage({
           )}
         </div>
 
-        <div
-          className="px-4 pb-10 -mt-10 relative space-y-6"
-          style={{ backgroundColor: appliedTheme.bg_color_1 }}
-        >
+        <div className="px-4 pb-10 -mt-24 relative z-10 space-y-6">
           <section className="text-center space-y-2">
             <h1
               className="text-2xl font-semibold"
