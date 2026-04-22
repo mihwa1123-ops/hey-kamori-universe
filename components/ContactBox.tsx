@@ -67,7 +67,7 @@ export function ContactBox({
                    transition-all duration-200 hover:-translate-y-0.5
                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lavender focus-visible:ring-offset-2"
       >
-        <span className="text-sm font-medium">{email}</span>
+        <span className="text-sm font-medium">✉️ {email}</span>
         {copied ? (
           <span className="flex items-center gap-1 text-success">
             <Check className="w-4 h-4" />
