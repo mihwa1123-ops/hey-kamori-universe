@@ -1,7 +1,12 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ChartBar, LayoutGrid, Lock, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
+
+export const metadata: Metadata = {
+  title: 'hey.kamori-admin',
+};
 
 async function signOutAction() {
   'use server';
